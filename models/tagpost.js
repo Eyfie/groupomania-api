@@ -10,6 +10,8 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
+  }, {
+    timestamps: false,
   });
   tagpost.associate = (models) => {
     tagpost.belongsToMany(models.post, {

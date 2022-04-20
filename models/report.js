@@ -8,6 +8,7 @@ module.exports = (sequelize, DataTypes) => {
     },
   }, {
     tableName: 'reports',
+    timestamps: false,
   });
   report.associate = (models) => {
     report.belongsTo(models.user, {

@@ -8,6 +8,7 @@ module.exports = (sequelize, DataTypes) => {
     },
   }, {
     tableName: 'participants',
+    timestamps: false,
   });
   participant.associate = (models) => {
     participant.belongsTo(models.event, {

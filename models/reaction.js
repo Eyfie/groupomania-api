@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     },
   }, {
     tablename: 'reactions',
-    timestamps: true,
+    timestamps: false,
   });
   reaction.associate = (models) => {
     reaction.belongsTo(models.post, {
