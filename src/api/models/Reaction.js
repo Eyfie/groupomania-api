@@ -1,12 +1,12 @@
 module.exports = (sequelize, DataTypes) => {
-  const reaction = sequelize.define('reaction', {
+  const Reaction = sequelize.define('Reaction', {
     id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       autoIncrement: true,
       primaryKey: true,
     },
-    reactionType: {
+    ReactionType: {
       type: DataTypes.STRING,
       allowNull: false,
     },
@@ -14,17 +14,22 @@ module.exports = (sequelize, DataTypes) => {
     tablename: 'reactions',
     timestamps: false,
   });
-  reaction.associate = (models) => {
-    reaction.belongsTo(models.post, {
+  Reaction.associate = (models) => {
+    Reaction.belongsTo(models.Post, {
       foreignKey: {
         allowNull: true,
       },
     });
-    reaction.belongsTo(models.comment, {
+    Reaction.belongsTo(models.Comment, {
       foreignKey: {
         allowNull: true,
+      },
+    });
+    Reaction.belongsTo(models.User, {
+      foreignKey: {
+        allowNull: false,
       },
     });
   };
-  return reaction;
+  return Reaction;
 };

@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-  const comment = sequelize.define('comment', {
+  const Comment = sequelize.define('Comment', {
     id: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -26,28 +26,28 @@ module.exports = (sequelize, DataTypes) => {
     tableName: 'comments',
     timestamps: true,
   });
-  comment.associate = (models) => {
-    comment.hasMany(models.comment, {
+  Comment.associate = (models) => {
+    Comment.hasMany(models.Comment, {
       onDelete: 'cascade',
     });
-    comment.hasMany(models.report, {
+    Comment.hasMany(models.Report, {
       onDelete: 'cascade',
     });
-    comment.belongsTo(models.user, {
+    Comment.belongsTo(models.User, {
       foreignKey: {
         allowNull: false,
       },
     });
-    comment.belongsTo(models.post, {
+    Comment.belongsTo(models.Post, {
       foreignKey: {
         allowNull: false,
       },
     });
-    comment.belongsTo(models.comment, {
+    Comment.belongsTo(models.Comment, {
       foreignKey: {
         allowNull: true,
       },
     });
   };
-  return comment;
+  return Comment;
 };

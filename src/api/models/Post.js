@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-  const event = sequelize.define('event', {
+  const Post = sequelize.define('Post', {
     id: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -14,13 +14,9 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    location: {
-      type: DataTypes.STRING,
+    media: {
+      type: DataTypes.STRING.BINARY,
       allowNull: true,
-    },
-    date: {
-      type: DataTypes.DATE,
-      allowNull: false,
     },
     createdAt: {
       type: DataTypes.DATE,
@@ -31,18 +27,27 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
     },
   }, {
-    tableName: 'events',
+    tableName: 'posts',
     timestamps: true,
   });
-  event.associate = (models) => {
-    event.hasMany(models.participant, {
+  Post.associate = (models) => {
+    Post.hasMany(models.Comment, {
       onDelete: 'cascade',
     });
-    event.belongsTo(models.user, {
+    Post.hasMany(models.Reaction, {
+      onDelete: 'cascade',
+    });
+    Post.hasMany(models.Tagpost, {
+      onDelete: 'cascade',
+    });
+    Post.hasMany(models.Report, {
+      onDelete: 'cascade',
+    });
+    Post.belongsTo(models.User, {
       foreignKey: {
         allowNull: false,
       },
     });
   };
-  return event;
+  return Post;
 };

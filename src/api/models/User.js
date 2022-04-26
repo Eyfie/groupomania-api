@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-  const user = sequelize.define('user', {
+  const User = sequelize.define('User', {
     id: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -57,18 +57,18 @@ module.exports = (sequelize, DataTypes) => {
     tableName: 'users',
     timestamps: true,
   });
-  user.associate = (models) => {
-    user.hasMany(models.post, {
+  User.associate = (models) => {
+    User.hasMany(models.Post, {
       onDelete: 'cascade',
     });
-    user.hasMany(models.comment, {
+    User.hasMany(models.Comment, {
       onDelete: 'cascade',
     });
-    user.hasMany(models.tagpro);
-    user.hasMany(models.event);
-    user.hasMany(models.report, {
+    User.hasMany(models.Tagpro);
+    User.hasMany(models.Event);
+    User.hasMany(models.Report, {
       onDelete: 'cascade',
     });
   };
-  return user;
+  return User;
 };
