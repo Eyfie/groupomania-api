@@ -1,6 +1,8 @@
 /* eslint-disable no-console */
 const http = require('http');
 const app = require('./app');
+const { sequelize } = require('./models');
+const db = require('./models');
 
 const server = http.createServer(app);
 
@@ -48,4 +50,21 @@ server.on('listening', () => {
 
   console.log(`Listening on ${bind}`);
 });
-server.listen(port);
+
+//* DB Connection
+sequelize.authenticate()
+  .then(() => {
+    console.log('Connected to DB');
+    //* DB Synchronization
+    db.sequelize.sync()
+      .then(() => {
+        console.log('Models synchronized');
+        server.listen(port);
+      })
+      .catch((error) => {
+        console.log('Synchronization failed', error);
+      });
+  })
+  .catch((error) => {
+    console.log('Authentication failed', error);
+  });

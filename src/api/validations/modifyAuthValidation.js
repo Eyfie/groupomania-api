@@ -14,7 +14,6 @@ yup.setLocale({
 //* TODO Put Regex for password checking
 const modifySchema = yup.object({
   newpassword: yup.string().min(8).max(32)
-    .matches()
     .required(),
 });
 

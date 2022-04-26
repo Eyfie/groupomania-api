@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-  const report = sequelize.define('report', {
+  const Report = sequelize.define('Report', {
     id: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -10,16 +10,16 @@ module.exports = (sequelize, DataTypes) => {
     tableName: 'reports',
     timestamps: false,
   });
-  report.associate = (models) => {
-    report.belongsTo(models.user, {
+  Report.associate = (models) => {
+    Report.belongsTo(models.User, {
       allowNull: false,
     });
-    report.belongsTo(models.post, {
+    Report.belongsTo(models.Post, {
       allowNull: true,
     });
-    report.belongsTo(models.comment, {
+    Report.belongsTo(models.Comment, {
       allowNull: true,
     });
   };
-  return report;
+  return Report;
 };

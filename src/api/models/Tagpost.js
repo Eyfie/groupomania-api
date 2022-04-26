@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-  const tagpost = sequelize.define('tagpost', {
+  const Tagpost = sequelize.define('Tagpost', {
     id: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -13,10 +13,10 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     timestamps: false,
   });
-  tagpost.associate = (models) => {
-    tagpost.belongsToMany(models.post, {
+  Tagpost.associate = (models) => {
+    Tagpost.belongsToMany(models.Post, {
       through: 'postHasTag',
     });
   };
-  return tagpost;
+  return Tagpost;
 };

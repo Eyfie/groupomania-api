@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-  const participant = sequelize.define('participant', {
+  const Participant = sequelize.define('Participant', {
     id: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -10,17 +10,17 @@ module.exports = (sequelize, DataTypes) => {
     tableName: 'participants',
     timestamps: false,
   });
-  participant.associate = (models) => {
-    participant.belongsTo(models.event, {
+  Participant.associate = (models) => {
+    Participant.belongsTo(models.Event, {
       foreignKey: {
         allowNull: false,
       },
     });
-    participant.belongsTo(models.user, {
+    Participant.belongsTo(models.User, {
       foreignKey: {
         allowNull: false,
       },
     });
   };
-  return participant;
+  return Participant;
 };

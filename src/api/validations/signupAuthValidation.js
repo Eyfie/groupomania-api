@@ -8,7 +8,6 @@ yup.setLocale({
     email: 'Votre email n\'est pas dans un format correct',
     min: 'Le mot de passe doit contenir au moins 8 caractères',
     max: 'Le mot de passe peut contenir 32 caractères au maximum',
-    matches: 'Le mot de passe doit contenir une majuscule, une minuscule et un chiffre au minimum',
   },
 });
 
@@ -18,9 +17,7 @@ const signupSchema = yup.object({
   firstname: yup.string().required(),
   lastname: yup.string().required(),
   email: yup.string().email().required(),
-  password: yup.string().min(8).max(32)
-    .matches('')
-    .required(),
+  password: yup.string().min(8).max(32).required(),
 });
 
 module.exports = signupSchema;
