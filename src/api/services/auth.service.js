@@ -41,7 +41,6 @@ exports.signup = async (body, protocol, host) => {
   };
 };
 
-//* TODO Check to get user (emailfound or userfound), need helpers ? Correct way
 exports.login = async (body) => {
   const { username, email, password } = body;
   const where = (typeof email === 'string') ? { email } : { username };
@@ -94,7 +93,6 @@ exports.modify = async (body, query) => {
   const { username, retriever } = query;
   const { newpassword } = body;
 
-  //* TODO transfer this to validation middleware
   if (!username || !retriever) throw new createError[400]('Missing parameters');
 
   const user = await User.findOne({ where: { userName: username } });
