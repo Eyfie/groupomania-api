@@ -4,14 +4,35 @@ const fs = require('fs/promises');
 const createError = require('http-errors');
 const { hashString, checkString } = require('../helpers/encrypter');
 const { verifyRefreshToken, generateAccessToken } = require('../helpers/token');
-const { User } = require('../models');
-//* Post, Comment, Reaction, Report, Event, Participant
+const { User, Post, Reaction, Comment, Report } = require('../models');
 
 exports.getAccount = async (params) => {
   const { userId } = params;
 
   //* TODO Sequelize query for all post/comment ['id']/reaction/report where:{report: userId(token)}
-  const userFound = await User.findOne({ where: { id: userId } });
+  const userFound = await User.findOne({
+    where: { id: userId },
+    include: [{
+      model: Post,
+      order: ['createdAt', 'DESC'],
+      include: [{
+
+        model: Comment,
+        attributes: ['id'],
+
+      }, {
+
+        model: Reaction,
+        attributes: ['id', 'userId', 'type'],
+
+      }, {
+
+        model: Report,
+        attributes: ['userId'],
+
+      }],
+    }],
+  });
   if (!userFound) throw new createError[404]('User not found');
 
   return userFound;
