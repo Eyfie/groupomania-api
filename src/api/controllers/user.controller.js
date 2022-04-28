@@ -1,3 +1,4 @@
+/* eslint-disable object-curly-newline */
 /* eslint-disable max-len */
 //* TODO Remove logout from doc
 const userService = require('../services/user.service');
@@ -24,17 +25,11 @@ exports.getMyAccount = async (req, res, next) => {
 };
 
 exports.modifyMyAccount = async (req, res, next) => {
-  const {
-    params,
-    body,
-    file,
-    protocol,
-    accessToken,
-  } = req;
+  const { params, body, file, protocol, accessToken } = req;
   const host = req.get('host');
   try {
-    const userModified = await userService.modifyMyAccount(params, body, file, protocol, accessToken, host);
-    res.status(201).json({ message: 'User updated successfully' }, ...userModified);
+    const userModified = await userService.modifyAccount(params, body, file, protocol, accessToken, host);
+    res.status(200).json({ message: 'User updated successfully', ...userModified });
   } catch (error) {
     next(error);
   }
@@ -42,9 +37,10 @@ exports.modifyMyAccount = async (req, res, next) => {
 
 //* TODO add to doc password necessity
 exports.deleteMyAccount = async (req, res, next) => {
-  const { body, params, accessToken } = req;
+  const { body, params, accessToken, protocol } = req;
+  const host = req.get('host');
   try {
-    const userDeleted = await userService.deleteMyAccount(body, params, accessToken);
+    const userDeleted = await userService.deleteAccount(body, params, accessToken, protocol, host);
     res.status(201).json({ message: 'User deleted' }, ...userDeleted);
   } catch (error) {
     next(error);

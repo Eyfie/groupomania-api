@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    textContent: {
+    textcontent: {
       type: DataTypes.STRING,
       allowNull: true,
     },

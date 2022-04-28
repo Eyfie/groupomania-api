@@ -11,11 +11,12 @@ yup.setLocale({
 });
 
 const loginSchema = yup.object({
-
-  username: yup.string().required(),
+  email: yup.string().email(),
+  username: yup.string(),
   password: yup.string()
     .min(8)
-    .max(32),
+    .max(32)
+    .required(),
 });
 
 module.exports = loginSchema;

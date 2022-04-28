@@ -6,7 +6,7 @@ module.exports = (sequelize, DataTypes) => {
       autoIncrement: true,
       primaryKey: true,
     },
-    textContent: {
+    textcontent: {
       type: DataTypes.STRING,
       allowNull: true,
     },
