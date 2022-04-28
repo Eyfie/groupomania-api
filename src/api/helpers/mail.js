@@ -19,7 +19,7 @@ const mail = (email, username, retriever) => {
     },
   });
   const mailOptions = {
-    from: process.env.MAIL_USERNAME,
+    from: process.env.MAIL,
     to: email,
     subject: 'Groupomania - Changement',
     html: message,

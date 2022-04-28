@@ -6,16 +6,16 @@ module.exports = (sequelize, DataTypes) => {
       autoIncrement: true,
       primaryKey: true,
     },
-    userName: {
+    username: {
       type: DataTypes.STRING,
       allowNull: false,
       unique: true,
     },
-    firstName: {
+    firstname: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    lastName: {
+    lastname: {
       type: DataTypes.STRING,
       allowNull: false,
     },
@@ -32,6 +32,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING.BINARY,
       allowNull: true,
     },
+    role: {
+      type: DataTypes.STRING,
+      defaultValue: 'user',
+    },
     theme: {
       type: DataTypes.INTEGER,
       defaultValue: 0,
@@ -41,6 +45,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
+    //* TODO Change rank to role in doc (type string)
     retrieverDate: {
       type: DataTypes.DATE,
       allowNull: true,
