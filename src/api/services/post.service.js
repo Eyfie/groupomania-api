@@ -7,6 +7,10 @@ const { Post, User, Comment, Reaction, Report, Tagpost } = require('../models');
 exports.getAllPosts = async (accessToken) => {
   if (!accessToken) throw new createError[401]('Not authorized');
 
+  const userId = accessToken.user.id;
+  const userFound = await User.findOne({ where: { id: userId } });
+  if (!userFound) throw new createError[404]('User not found');
+
   const allPosts = await Post.findAll({
     order: ['createAt', 'DESC'],
     include: [{
@@ -27,9 +31,11 @@ exports.getAllPosts = async (accessToken) => {
 exports.getPost = async (params, accessToken) => {
   if (!accessToken) throw new createError[401]('Not authorized');
 
-  const { postId } = params;
   const userId = accessToken.user.id;
+  const userFound = await User.findOne({ where: { id: userId } });
+  if (!userFound) throw new createError[404]('User not found');
 
+  const { postId } = params;
   const post = await Post.findOne({
     where: { id: postId },
     include: [{
