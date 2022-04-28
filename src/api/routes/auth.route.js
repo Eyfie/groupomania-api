@@ -1,10 +1,8 @@
+/* eslint-disable object-curly-newline */
 const router = require('express').Router();
 const validation = require('../middlewares/validation');
 const auth = require('../controllers/auth.controller');
-const loginSchema = require('../validations/loginAuthValidation');
-const signupSchema = require('../validations/signupAuthValidation');
-const forgotSchema = require('../validations/forgotAuthValidation');
-const modifySchema = require('../validations/modifyAuthValidation');
+const { loginSchema, signupSchema, forgotSchema, modifySchema } = require('../validations/auth.validation');
 
 router.post('/login', (...args) => validation(loginSchema, ...args), auth.login);
 router.post('/signup', (...args) => validation(signupSchema, ...args), auth.signup);
