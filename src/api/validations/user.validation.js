@@ -11,6 +11,7 @@ yup.setLocale({
     email: 'Votre email n\'est pas dans un format correct',
   },
 });
+//* TODO Add theme to doc for patch user
 //* TODO Put regex password
 exports.accountSchema = yup.object({
   username: yup.string(),
@@ -19,6 +20,7 @@ exports.accountSchema = yup.object({
   password: yup.string().min(8).max(32),
   newpassword: yup.string().min(8).max(32),
   email: yup.string().email(),
+  theme: yup.number().integer().min(0).max(1),
 });
 
 exports.accountDeleteSchema = yup.object({

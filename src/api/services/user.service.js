@@ -4,30 +4,22 @@ const fs = require('fs/promises');
 const createError = require('http-errors');
 const { hashString, checkString } = require('../helpers/encrypter');
 const { verifyRefreshToken, generateAccessToken } = require('../helpers/token');
+const { User } = require('../models');
+//* Post, Comment, Reaction, Report, Event, Participant
 
-const { User, Post, Comment, Reaction, Report, Event, Participant } = require('../models');
+exports.getAccount = async (params) => {
+  const { userId } = params;
 
-exports.getAccount = async (body) => {
-  const { userId } = body;
-
-  const userFound = await User.findOne({
-    where: { id: userId },
-    include: [{
-      model: Post,
-      include: [Comment, Reaction, Report],
-    }, {
-      model: Event,
-      include: [Participant],
-    }],
-  });
+  //* TODO Sequelize query for all post/comment ['id']/reaction/report where:{report: userId(token)}
+  const userFound = await User.findOne({ where: { id: userId } });
   if (!userFound) throw new createError[404]('User not found');
 
   return userFound;
 };
 
-exports.getMyAccount = async (body, accessToken) => {
-  const { userId } = body;
-  if (userId !== accessToken.userId) throw new createError[401]('Not authorized');
+exports.getMyAccount = async (params, accessToken) => {
+  const userId = parseInt(params.userId, 10);
+  if (userId !== accessToken.user.id) throw new createError[401]('Not authorized');
 
   const user = await User.findOne({ where: { id: userId } });
   if (!user) throw new createError[404]('User not found');
@@ -35,9 +27,10 @@ exports.getMyAccount = async (body, accessToken) => {
   return user;
 };
 
+//* TODO fucking params is a string not a number change it
 exports.modifyMyAccount = async (params, body, file, protocol, accessToken, host) => {
   const { userId } = params;
-  if (userId !== accessToken.userId) throw new createError[401]('Not authorized');
+  if (parseInt(userId, 10) !== accessToken.user.id) throw new createError[401]('Not authorized');
 
   //* Check if user exist
   const userFound = await User.findOne({ where: { id: userId } });
@@ -86,7 +79,7 @@ exports.modifyMyAccount = async (params, body, file, protocol, accessToken, host
 };
 
 exports.deleteMyAccount = async (body, params, accessToken) => {
-  const { userId } = params;
+  const userId = parseInt(params.userId, 10);
   const { password } = body;
   if (userId !== accessToken.userId) throw new createError[401]('Not authorized');
 
@@ -110,7 +103,7 @@ exports.refreshToken = async (headers) => {
 
   const refreshToken = verifyRefreshToken(token);
 
-  const userFound = await User.findOne({ where: { id: refreshToken.userId } });
+  const userFound = await User.findOne({ where: { id: refreshToken.user.id } });
   if (!userFound) throw new createError[404]('User not found');
 
   delete refreshToken.iat;

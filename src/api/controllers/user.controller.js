@@ -4,26 +4,26 @@ const userService = require('../services/user.service');
 
 //* TODO Verify params / query is good
 exports.getUser = async (req, res, next) => {
-  const { body } = req;
+  const { params } = req;
   try {
-    const userData = await userService.getAccountById(body);
+    const userData = await userService.getAccount(params);
     res.status(201).json({ message: 'User found', ...userData });
   } catch (error) {
     next(error);
   }
 };
 
-exports.getAccount = async (req, res, next) => {
-  const { body, accessToken } = req;
+exports.getMyAccount = async (req, res, next) => {
+  const { params, accessToken } = req;
   try {
-    const myData = await userService.getMyAccount(body, accessToken);
+    const myData = await userService.getMyAccount(params, accessToken);
     res.status(201).json({ message: 'User found', ...myData });
   } catch (error) {
     next(error);
   }
 };
 
-exports.modifyAccount = async (req, res, next) => {
+exports.modifyMyAccount = async (req, res, next) => {
   const {
     params,
     body,
@@ -39,8 +39,9 @@ exports.modifyAccount = async (req, res, next) => {
     next(error);
   }
 };
+
 //* TODO add to doc password necessity
-exports.deleteAccount = async (req, res, next) => {
+exports.deleteMyAccount = async (req, res, next) => {
   const { body, params, accessToken } = req;
   try {
     const userDeleted = await userService.deleteMyAccount(body, params, accessToken);
@@ -49,7 +50,9 @@ exports.deleteAccount = async (req, res, next) => {
     next(error);
   }
 };
+
 //* TODO Check how to pass the refreshed Token
+//* TODO Add refreshToken route to doc
 exports.refreshToken = async (req, res, next) => {
   const { headers } = req;
   try {
