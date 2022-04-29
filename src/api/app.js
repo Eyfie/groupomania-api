@@ -7,6 +7,7 @@ const auth = require('./middlewares/auth');
 
 const authRoutes = require('./routes/auth.route');
 const userRoutes = require('./routes/user.route');
+const postRoutes = require('./routes/post.route');
 
 const app = express();
 require('dotenv').config();
@@ -27,6 +28,7 @@ app.use(auth);
 
 //* Routes
 app.use('/api', userRoutes);
+app.use('/api', postRoutes);
 
 //* Errors
 app.use(errorHandler);
