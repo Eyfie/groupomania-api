@@ -87,9 +87,9 @@ exports.forgot = async (body) => {
   return true;
 };
 
-exports.modify = async (body, query) => {
+exports.modify = async (body, params) => {
   //* TODO Check for params or req.query
-  const { username, retriever } = query;
+  const { username, retriever } = params;
   const { newpassword } = body;
 
   if (!username || !retriever) throw new createError[400]('Missing parameters');

@@ -3,7 +3,7 @@ const fs = require('fs/promises');
 const createError = require('http-errors');
 const { Post, User, Comment, Reaction, Report, Tagpost } = require('../models');
 
-//* TODO Check for access
+//* TODO Check SQL request
 exports.getAllPosts = async (accessToken) => {
   const userId = accessToken.user.id;
   const userFound = await User.findOne({ where: { id: userId } });
@@ -25,7 +25,7 @@ exports.getAllPosts = async (accessToken) => {
   return allPosts;
 };
 
-//* TODO check request
+//* TODO check SQL request
 exports.getPost = async (params, accessToken) => {
   const userId = accessToken.user.id;
   const userFound = await User.findOne({ where: { id: userId } });
@@ -92,7 +92,7 @@ exports.modifyPost = async (params, body, file, protocol, host, accessToken) => 
 
   const updatedPost = await Post.update({ ...post }, { where: { id: postId } });
   if (!updatedPost) throw new createError[500]('Something went wrong, please try again');
-  //* TODO check lien fs
+  //* TODO check fs link
   if (file) fs.unlink(`public/images/${body.media}`);
 
   return updatedPost;

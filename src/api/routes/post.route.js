@@ -8,4 +8,4 @@ router.get('/post', post.getAllPosts);
 router.get('/:postId', post.getPost);
 router.post('/post', (...args) => validation(postSchema, ...args), multer, post.createPost);
 router.patch('/:postId', (...args) => validation(postSchema, ...args), multer, post.modifyPost);
-router.delete('/:postId/delete', post.deletePost);
+router.delete('/:postId', post.deletePost);

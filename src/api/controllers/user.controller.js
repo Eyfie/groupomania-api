@@ -47,7 +47,7 @@ exports.deleteMyAccount = async (req, res, next) => {
   }
 };
 
-//* TODO Add refreshToken route to doc
+//* TODO Verify refresh Token route (hos to ?)
 exports.refreshToken = async (req, res, next) => {
   const { headers } = req;
   try {
