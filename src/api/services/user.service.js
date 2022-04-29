@@ -16,20 +16,14 @@ exports.getAccount = async (params) => {
       model: Post,
       order: ['createdAt', 'DESC'],
       include: [{
-
         model: Comment,
         attributes: ['id'],
-
       }, {
-
         model: Reaction,
         attributes: ['id', 'userId', 'type'],
-
       }, {
-
         model: Report,
         attributes: ['userId'],
-
       }],
     }],
   });

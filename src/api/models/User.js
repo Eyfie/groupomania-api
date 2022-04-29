@@ -45,7 +45,6 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    //* TODO Change rank to role in doc (type string)
     retrieverDate: {
       type: DataTypes.DATE,
       allowNull: true,

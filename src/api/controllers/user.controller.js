@@ -52,7 +52,7 @@ exports.refreshToken = async (req, res, next) => {
   const { headers } = req;
   try {
     const tokenRefreshed = await userService.refreshToken(headers);
-    res.status(201).json({ message: 'Token refreshed' }, tokenRefreshed);
+    res.status(200).json({ message: 'Token refreshed' }, ...tokenRefreshed);
   } catch (error) {
     next(error);
   }
