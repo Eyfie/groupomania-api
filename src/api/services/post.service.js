@@ -57,14 +57,15 @@ exports.getPost = async (params, accessToken) => {
 };
 
 exports.createPost = async (body, file, protocol, accessToken, host) => {
-  const { userId } = accessToken.user.id;
-  const user = await User.findOne({ where: { id: userId } });
+  const UserId = accessToken.user.id;
+  const user = await User.findOne({ where: { id: UserId } });
   if (!user) throw new createError[404]('User not found');
 
   const post = file ? {
     ...JSON.parse(body),
     media: `${protocol}://${host}/avatar/${file.filename}`,
-  } : { ...body };
+    UserId,
+  } : { ...body, UserId };
 
   const newPost = await Post.create({ post });
   if (!newPost) throw new createError[500]('Something went wrong, please try again');
@@ -77,12 +78,12 @@ exports.modifyPost = async (params, body, file, protocol, host, accessToken) => 
   const postFound = await Post.findOne({ where: { id: postId } });
   if (!postFound) throw new createError[404]('Post not found');
 
-  const { userId } = accessToken.user.id;
-  const userFound = await User.findOne({ where: { id: userId } });
+  const UserId = accessToken.user.id;
+  const userFound = await User.findOne({ where: { id: UserId } });
   if (!userFound) throw new createError[404]('User not found');
 
   if (userFound.role !== 'moderator') {
-    if (postFound.userId !== userId) throw new createError[401]('Not authroized');
+    if (postFound.UserId !== UserId) throw new createError[401]('Not authroized');
   }
 
   const post = file ? {
@@ -103,12 +104,12 @@ exports.deletePost = async (params, accessToken) => {
   const postFound = await Post.findOne({ where: { id: postId } });
   if (!postFound) throw new createError[404]('Post not found');
 
-  const { userId } = accessToken.user.id;
+  const userId = accessToken.user.id;
   const userFound = await User.findOne({ where: { id: userId } });
   if (!userFound) throw new createError[404]('User not found');
 
   if (userFound.role !== 'moderator') {
-    if (postFound.userId !== userId) throw new createError[401]('Not authroized');
+    if (postFound.UserId !== userId) throw new createError[401]('Not authroized');
   }
 
   const deletedPost = await Post.delete({ where: { id: postId } });
