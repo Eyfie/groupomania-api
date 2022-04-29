@@ -28,7 +28,7 @@ app.use(auth);
 
 //* Routes
 app.use('/api', userRoutes);
-app.use('/api', postRoutes);
+app.use('/api/post', postRoutes);
 
 //* Errors
 app.use(errorHandler);
