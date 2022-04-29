@@ -5,8 +5,6 @@ const { Post, User, Comment, Reaction, Report, Tagpost } = require('../models');
 
 //* TODO Check for access
 exports.getAllPosts = async (accessToken) => {
-  if (!accessToken) throw new createError[401]('Not authorized');
-
   const userId = accessToken.user.id;
   const userFound = await User.findOne({ where: { id: userId } });
   if (!userFound) throw new createError[404]('User not found');
@@ -29,8 +27,6 @@ exports.getAllPosts = async (accessToken) => {
 
 //* TODO check request
 exports.getPost = async (params, accessToken) => {
-  if (!accessToken) throw new createError[401]('Not authorized');
-
   const userId = accessToken.user.id;
   const userFound = await User.findOne({ where: { id: userId } });
   if (!userFound) throw new createError[404]('User not found');
@@ -61,8 +57,6 @@ exports.getPost = async (params, accessToken) => {
 };
 
 exports.createPost = async (body, file, protocol, accessToken, host) => {
-  if (!accessToken) throw new createError[401]('Not Authorized');
-
   const { userId } = accessToken.user.id;
   const user = await User.findOne({ where: { id: userId } });
   if (!user) throw new createError[404]('User not found');
@@ -79,8 +73,6 @@ exports.createPost = async (body, file, protocol, accessToken, host) => {
 };
 
 exports.modifyPost = async (params, body, file, protocol, host, accessToken) => {
-  if (!accessToken) throw new createError[401]('Not authorized');
-
   const { postId } = params;
   const postFound = await Post.findOne({ where: { id: postId } });
   if (!postFound) throw new createError[404]('Post not found');
@@ -107,8 +99,6 @@ exports.modifyPost = async (params, body, file, protocol, host, accessToken) => 
 };
 
 exports.deletePost = async (params, accessToken) => {
-  if (!accessToken) throw new createError[401]('Not Authorized');
-
   const { postId } = params;
   const postFound = await Post.findOne({ where: { id: postId } });
   if (!postFound) throw new createError[404]('Post not found');
