@@ -6,16 +6,16 @@ module.exports = (sequelize, DataTypes) => {
       autoIncrement: true,
       primaryKey: true,
     },
-    userName: {
+    username: {
       type: DataTypes.STRING,
       allowNull: false,
       unique: true,
     },
-    firstName: {
+    firstname: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    lastName: {
+    lastname: {
       type: DataTypes.STRING,
       allowNull: false,
     },
@@ -31,6 +31,10 @@ module.exports = (sequelize, DataTypes) => {
     avatar: {
       type: DataTypes.STRING.BINARY,
       allowNull: true,
+    },
+    role: {
+      type: DataTypes.STRING,
+      defaultValue: 'user',
     },
     theme: {
       type: DataTypes.INTEGER,

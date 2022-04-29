@@ -1,6 +1,7 @@
 const createError = require('http-errors');
 const authService = require('../services/auth.service');
 
+//* TODO Verify params / query is good
 exports.signup = async (req, res, next) => {
   const { body, protocol } = req;
   const host = req.get('host');
@@ -26,9 +27,7 @@ exports.forgot = async (req, res, next) => {
   const { body } = req;
   try {
     const mailed = await authService.forgot(body);
-
     if (!mailed) throw new createError[500]('Something wen wrong, please try again');
-
     res.status(200).json({ message: 'Email sent to user' });
   } catch (error) {
     next(error);

@@ -15,7 +15,7 @@ exports.signup = async (body, protocol, host) => {
     password,
   } = body;
 
-  const usernameUsed = await User.findOne({ where: { userName: username } });
+  const usernameUsed = await User.findOne({ where: { username } });
   if (usernameUsed) throw new createError[409]('This username is already used.');
 
   const emailUsed = await User.findOne({ where: { email } });
@@ -24,12 +24,11 @@ exports.signup = async (body, protocol, host) => {
   const hashedPassword = await hashString(password);
 
   const user = await User.create({
-    userName: username,
-    firstName: firstname,
-    lastName: lastname,
+    username,
+    firstname,
+    lastname,
     email,
     password: hashedPassword,
-    userType: 0,
     avatar: `${protocol}://${host}/avatar/default-avatar.png`,
     theme: 0,
   });
@@ -41,7 +40,6 @@ exports.signup = async (body, protocol, host) => {
   };
 };
 
-//* TODO Check to get user (emailfound or userfound), need helpers ? Correct way
 exports.login = async (body) => {
   const { username, email, password } = body;
   const where = (typeof email === 'string') ? { email } : { username };
@@ -94,10 +92,9 @@ exports.modify = async (body, query) => {
   const { username, retriever } = query;
   const { newpassword } = body;
 
-  //* TODO transfer this to validation middleware
   if (!username || !retriever) throw new createError[400]('Missing parameters');
 
-  const user = await User.findOne({ where: { userName: username } });
+  const user = await User.findOne({ where: { username } });
   if (!user) throw new createError[404]('User not found');
 
   const requestDate = Date.now();
@@ -112,7 +109,7 @@ exports.modify = async (body, query) => {
   if (matchPassword) throw new createError[409]('Your password can not be the same as your previous one');
 
   const hashedPassword = await hashString(newpassword);
-  const updateUser = await User.update({ password: hashedPassword }, { where: { userName: username } });
+  const updateUser = await User.update({ password: hashedPassword }, { where: { username } });
   if (!updateUser) return false;
 
   return true;
