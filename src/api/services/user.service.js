@@ -4,7 +4,7 @@ const fs = require('fs/promises');
 const createError = require('http-errors');
 const { hashString, checkString } = require('../helpers/encrypter');
 const { verifyRefreshToken, generateAccessToken } = require('../helpers/token');
-const { User, Post, Reaction, Comment, Report } = require('../models');
+const { User, Post, Reaction, Comment, Report, Tagpost } = require('../models');
 
 exports.getAccount = async (params) => {
   const { userId } = params;
@@ -15,6 +15,8 @@ exports.getAccount = async (params) => {
       model: Post,
       order: ['createdAt', 'DESC'],
       include: [{
+        model: Tagpost,
+      }, {
         model: Comment,
         attributes: ['id'],
       }, {
