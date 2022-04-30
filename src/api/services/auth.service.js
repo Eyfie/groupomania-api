@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 const createError = require('http-errors');
 const { hashString, checkString } = require('../helpers/encrypter');
-const { generateAccessToken, generateRefreshToken } = require('../helpers/token');
+const { generateAccessToken, generateRefreshToken, verifyRefreshToken } = require('../helpers/token');
 const { generateString } = require('../helpers/stringGenerator');
 const { User } = require('../models');
 const mail = require('../helpers/mail');
@@ -113,4 +113,21 @@ exports.modify = async (body, params) => {
   if (!updateUser) return false;
 
   return true;
+};
+
+exports.refreshToken = async (headers) => {
+  const token = headers.authorization.split(' ')[1];
+  if (!token) throw new createError[401]('You need to be logged in');
+
+  const refreshToken = verifyRefreshToken(token);
+
+  const userFound = await User.findOne({ where: { id: refreshToken.user.id } });
+  if (!userFound) throw new createError[404]('User not found');
+
+  delete refreshToken.iat;
+  delete refreshToken.exp;
+
+  const refreshedToken = generateAccessToken(refreshToken);
+
+  return { userFound, accessToken: refreshedToken };
 };

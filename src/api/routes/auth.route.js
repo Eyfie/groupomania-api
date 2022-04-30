@@ -8,5 +8,6 @@ router.post('/login', (...args) => validation(loginSchema, ...args), auth.login)
 router.post('/signup', (...args) => validation(signupSchema, ...args), auth.signup);
 router.post('/forgot', (...args) => validation(forgotSchema, ...args), auth.forgot);
 router.post('/forgot/modify', (...args) => validation(modifySchema, ...args), auth.modify);
+router.post('/refreshToken', auth.refreshToken);
 
 module.exports = router;

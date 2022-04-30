@@ -8,7 +8,8 @@ exports.getUser = async (req, res, next) => {
   const { params } = req;
   try {
     const userData = await userService.getAccount(params);
-    res.status(201).json({ message: 'User found', ...userData });
+    console.log({ ...userData });
+    res.status(200).json({ message: 'User found', ...userData.dataValues });
   } catch (error) {
     next(error);
   }
@@ -42,17 +43,6 @@ exports.deleteMyAccount = async (req, res, next) => {
   try {
     const userDeleted = await userService.deleteAccount(body, params, accessToken, protocol, host);
     res.status(201).json({ message: 'User deleted' }, ...userDeleted);
-  } catch (error) {
-    next(error);
-  }
-};
-
-//* TODO Verify refresh Token route (hos to ?)
-exports.refreshToken = async (req, res, next) => {
-  const { headers } = req;
-  try {
-    const tokenRefreshed = await userService.refreshToken(headers);
-    res.status(200).json({ message: 'Token refreshed' }, ...tokenRefreshed);
   } catch (error) {
     next(error);
   }

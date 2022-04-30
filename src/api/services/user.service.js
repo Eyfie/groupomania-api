@@ -3,13 +3,12 @@
 const fs = require('fs/promises');
 const createError = require('http-errors');
 const { hashString, checkString } = require('../helpers/encrypter');
-const { verifyRefreshToken, generateAccessToken } = require('../helpers/token');
 const { User, Post, Reaction, Comment, Report, Tagpost } = require('../models');
 
 exports.getAccount = async (params) => {
   const { userId } = params;
 
-  const userFound = await User.findAll({
+  const userFound = await User.findOne({
     where: { id: userId },
     include: [{
       model: Post,
@@ -28,7 +27,6 @@ exports.getAccount = async (params) => {
     }],
   });
   if (!userFound) throw new createError[404]('User not found');
-
   return userFound;
 };
 
@@ -90,9 +88,10 @@ exports.modifyAccount = async (params, body, file, protocol, accessToken, host) 
       const updatedUser = await User.update({ ...user, password: hashedPassword }, { where: { id: userId } });
       if (!updatedUser) throw new createError[500]('Something went wrong, please try again !');
 
-      if (file) await fs.unlink(`public/avatar/${body.avatar}`);
-
-      return updatedUser;
+      if (file && userFound.avatar !== `${protocol}://${host}/avatar/default-avatar.png`) {
+        await fs.unlink(`public/avatar/${userFound.avatar}`.split('/avatar/')[1]);
+      }
+      return user;
     }
 
     if (user.password) delete user.password;
@@ -100,9 +99,11 @@ exports.modifyAccount = async (params, body, file, protocol, accessToken, host) 
     const updatedUser = await User.update({ ...user }, { where: { id: userId } });
     if (!updatedUser) throw new createError[500]('Something went wrong, please try again !');
 
-    if (file) await fs.unlink(`public/avatar/${body.avatar}`);
+    if (file && userFound.avatar !== `${protocol}://${host}/avatar/default-avatar.png`) {
+      await fs.unlink(`public/avatar/${userFound.avatar}`.split('/avatar/')[1]);
+    }
 
-    return updatedUser;
+    return user;
   }
 
   if (user.password) delete user.password;
@@ -110,7 +111,9 @@ exports.modifyAccount = async (params, body, file, protocol, accessToken, host) 
   const updatedUser = await User.update({ ...user }, { where: { id: userId } });
   if (!updatedUser) throw new createError[500]('Something went wrong, please try again !');
 
-  if (file) await fs.unlink(`public/avatar/${body.avatar}`);
+  if (file && userFound.avatar !== `${protocol}://${host}/avatar/default-avatar.png`) {
+    await fs.unlink(`public/avatar/${userFound.avatar}`.split('/avatar/')[1]);
+  }
 
   return updatedUser;
 };
@@ -134,21 +137,4 @@ exports.deleteAccount = async (body, params, accessToken, protocol, host) => {
   if (user.avatar !== defaultAvatar) await fs.unlink(`/public/avatar/${user.avatar}`.split('/avatar/')[1]);
 
   return deletedUser;
-};
-
-exports.refreshToken = async (headers) => {
-  const token = headers.authorization.split(' ')[1];
-  if (!token) throw new createError[401]('You need to be logged in');
-
-  const refreshToken = verifyRefreshToken(token);
-
-  const userFound = await User.findOne({ where: { id: refreshToken.user.id } });
-  if (!userFound) throw new createError[404]('User not found');
-
-  delete refreshToken.iat;
-  delete refreshToken.exp;
-
-  const refreshedToken = generateAccessToken(refreshToken);
-
-  return { userFound, accessToken: refreshedToken };
 };

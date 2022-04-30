@@ -43,3 +43,15 @@ exports.modify = async (req, res, next) => {
     next(error);
   }
 };
+
+//* TODO Verify refresh Token route (hos to ?)
+exports.refreshToken = async (req, res, next) => {
+  const { headers } = req;
+  try {
+    const tokenRefreshed = await authService.refreshToken(headers);
+    console.log(tokenRefreshed);
+    res.status(200).json({ message: 'Token refreshed', accessToken: tokenRefreshed.accessToken });
+  } catch (error) {
+    next(error);
+  }
+};
