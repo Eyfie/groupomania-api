@@ -1,7 +1,6 @@
 const createError = require('http-errors');
 const authService = require('../services/auth.service');
 
-//* TODO Verify params / query is good
 exports.signup = async (req, res, next) => {
   const { body, protocol } = req;
   const host = req.get('host');
@@ -35,12 +34,10 @@ exports.forgot = async (req, res, next) => {
 };
 
 exports.modify = async (req, res, next) => {
-  //* TODO Check for params or req.query
-  const { body, query } = req;
+  const { body, params } = req;
   try {
-    const passwordChanged = await authService.modify(body, query);
+    const passwordChanged = await authService.modify(body, params);
     if (!passwordChanged) throw new createError[500]('Something went wrong, please try again !');
-
     res.status(200).json({ message: 'Password changed !' });
   } catch (error) {
     next(error);
