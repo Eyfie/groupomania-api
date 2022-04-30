@@ -9,6 +9,7 @@ const authRoutes = require('./routes/auth.route');
 const userRoutes = require('./routes/user.route');
 const postRoutes = require('./routes/post.route');
 const commentRoutes = require('./routes/comment.route');
+const reactionRoutes = require('./routes/reaction.route');
 
 const app = express();
 require('dotenv').config();
@@ -22,17 +23,18 @@ app.use('/images', express.static(path.join(__dirname, '../../public/images')));
 app.use('/video', express.static(path.join(__dirname, '../../public/video')));
 
 //* Signup / Login / Retrieve
-app.use('/api/user', authRoutes);
+app.use('/api/auth', authRoutes);
 
 //* Auth
 app.use(auth);
 
 //* Routes
-app.use('/api', userRoutes);
+app.use('/api/user', userRoutes);
 app.use('/api/post', postRoutes);
 app.use('/api/comment', commentRoutes);
+app.use('/api/reaction', reactionRoutes);
 
 //* Errors
-app.use(errorHandler);
+app.use('/api', errorHandler);
 
 module.exports = app;
