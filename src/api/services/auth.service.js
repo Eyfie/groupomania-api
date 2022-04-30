@@ -13,6 +13,7 @@ exports.signup = async (body, protocol, host) => {
     lastname,
     email,
     password,
+    theme,
   } = body;
 
   const usernameUsed = await User.findOne({ where: { username } });
@@ -30,7 +31,7 @@ exports.signup = async (body, protocol, host) => {
     email,
     password: hashedPassword,
     avatar: `${protocol}://${host}/avatar/default-avatar.png`,
-    theme: 0,
+    theme,
   });
 
   return {
@@ -83,12 +84,11 @@ exports.forgot = async (body) => {
   const userUpdate = await User.update({ retriever: hashedRetriever, retrieverDate }, { where: { email } });
   if (!userUpdate) return false;
 
-  mail(email, user.userName, retriever);
+  mail(email, user.username, retriever);
   return true;
 };
 
 exports.modify = async (body, params) => {
-  //* TODO Check for params or req.query
   const { username, retriever } = params;
   const { newpassword } = body;
 
