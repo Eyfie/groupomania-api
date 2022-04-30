@@ -8,6 +8,7 @@ const auth = require('./middlewares/auth');
 const authRoutes = require('./routes/auth.route');
 const userRoutes = require('./routes/user.route');
 const postRoutes = require('./routes/post.route');
+const commentRoutes = require('./routes/comment.route');
 
 const app = express();
 require('dotenv').config();
@@ -29,6 +30,7 @@ app.use(auth);
 //* Routes
 app.use('/api', userRoutes);
 app.use('/api/post', postRoutes);
+app.use('/api/comment', commentRoutes);
 
 //* Errors
 app.use(errorHandler);
