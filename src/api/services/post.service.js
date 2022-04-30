@@ -12,6 +12,11 @@ exports.getAllPosts = async (accessToken) => {
   const allPosts = await Post.findAll({
     order: ['createAt', 'DESC'],
     include: [{
+      model: User,
+      attributes: ['id', 'username', 'firtsname', 'lastname', 'avatar'],
+    }, {
+      model: Tagpost,
+    }, {
       model: Comment,
       attributes: ['id'],
     }, {
@@ -96,7 +101,7 @@ exports.modifyPost = async (params, body, file, protocol, host, accessToken) => 
   //* TODO check fs link
   if (file) fs.unlink(`public/images/${body.media}`);
 
-  return updatedPost;
+  return post;
 };
 
 exports.deletePost = async (params, accessToken) => {
