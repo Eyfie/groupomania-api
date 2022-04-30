@@ -9,8 +9,7 @@ const { User, Post, Reaction, Comment, Report } = require('../models');
 exports.getAccount = async (params) => {
   const { userId } = params;
 
-  //* TODO Sequelize query for all post/comment ['id']/reaction/report where:{report: userId(token)}
-  const userFound = await User.findOne({
+  const userFound = await User.findAll({
     where: { id: userId },
     include: [{
       model: Post,
@@ -20,10 +19,9 @@ exports.getAccount = async (params) => {
         attributes: ['id'],
       }, {
         model: Reaction,
-        attributes: ['id', 'userId', 'type'],
       }, {
         model: Report,
-        attributes: ['userId'],
+        attributes: ['UserId'],
       }],
     }],
   });
