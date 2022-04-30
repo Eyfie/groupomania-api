@@ -5,10 +5,12 @@ yup.setLocale({
     required: ({ path }) => `Le champ ${path} doit être rempli`,
   },
   string: {
-    matches: 'Les chaînes de caractères doivent être _\'like\' ou \'dislike\'',
+    matches: 'La chaîne de caractères envoyée doit être \'like\' ou \'dislike\'',
   },
 });
 
 exports.reactionSchema = yup.object({
-  type: yup.string().matches(/(like|dislike)/).require(),
+  type: yup.string().matches(/(like|dislike)/).required(),
+  PostId: yup.number().integer(),
+  CommentId: yup.number().integer(),
 });
