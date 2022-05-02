@@ -7,6 +7,9 @@ yup.setLocale({
   string: {
     matches: 'La chaîne de caractères envoyée doit être \'like\' ou \'dislike\'',
   },
+  number: {
+    integer: 'Ce chiffre n\'est pas un entier',
+  },
 });
 
 exports.reactionSchema = yup.object({

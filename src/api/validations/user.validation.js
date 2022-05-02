@@ -20,7 +20,7 @@ exports.accountSchema = yup.object({
   password: yup.string().min(8).max(32),
   newpassword: yup.string().min(8).max(32),
   email: yup.string().email(),
-  theme: yup.number().integer().min(0).max(1),
+  theme: yup.string().matches(/(light|dark)/),
 });
 
 exports.accountDeleteSchema = yup.object({

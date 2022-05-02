@@ -1,6 +1,19 @@
 const yup = require('yup');
 
-exports.postSchema = yup.object({
+yup.setLocale({
+  mixed: {
+    required: ({ path }) => `Le champ ${path} doit être rempli`,
+  },
+  number: {
+    integer: 'Ce chiffre n\'est pas un entier',
+  },
+});
+
+exports.commentSchema = yup.object({
   textcontent: yup.string(),
-  PostId: yup.number().integer(),
+  PostId: yup.number().integer().required(),
+});
+
+exports.commentEditSchema = yup.object({
+  textcontent: yup.string(),
 });

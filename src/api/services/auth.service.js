@@ -35,7 +35,7 @@ exports.signup = async (body, protocol, host) => {
   });
 
   return {
-    ...user,
+    ...user.dataValues,
     email: undefined,
     password: undefined,
   };
@@ -69,7 +69,16 @@ exports.login = async (body) => {
   const accessToken = generateAccessToken(user);
   const refreshToken = generateRefreshToken(user);
 
-  return { user, accessToken, refreshToken };
+  return {
+    ...user.dataValues,
+    email: undefined,
+    password: undefined,
+    retriever: undefined,
+    retrieverDate: undefined,
+    role: undefined,
+    accessToken,
+    refreshToken,
+  };
 };
 
 exports.forgot = async (body) => {
@@ -88,8 +97,8 @@ exports.forgot = async (body) => {
   return true;
 };
 
-exports.modify = async (body, params) => {
-  const { username, retriever } = params;
+exports.modify = async (body, query) => {
+  const { username, retriever } = query;
   const { newpassword } = body;
 
   if (!username || !retriever) throw new createError[400]('Missing parameters');

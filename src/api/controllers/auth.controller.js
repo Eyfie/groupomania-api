@@ -16,7 +16,7 @@ exports.login = async (req, res, next) => {
   const { body } = req;
   try {
     const user = await authService.login(body);
-    res.status(200).json({ message: 'Successfully logged in !', ...user });
+    res.status(200).json({ message: 'Successfully logged in !', user });
   } catch (error) {
     next(error);
   }
@@ -32,11 +32,11 @@ exports.forgot = async (req, res, next) => {
     next(error);
   }
 };
-
+//* TODO Verify Query / Params
 exports.modify = async (req, res, next) => {
-  const { body, params } = req;
+  const { body, query } = req;
   try {
-    const passwordChanged = await authService.modify(body, params);
+    const passwordChanged = await authService.modify(body, query);
     if (!passwordChanged) throw new createError[500]('Something went wrong, please try again !');
     res.status(200).json({ message: 'Password changed !' });
   } catch (error) {
@@ -44,12 +44,10 @@ exports.modify = async (req, res, next) => {
   }
 };
 
-//* TODO Verify refresh Token route (hos to ?)
 exports.refreshToken = async (req, res, next) => {
   const { headers } = req;
   try {
     const tokenRefreshed = await authService.refreshToken(headers);
-    console.log(tokenRefreshed);
     res.status(200).json({ message: 'Token refreshed', accessToken: tokenRefreshed.accessToken });
   } catch (error) {
     next(error);

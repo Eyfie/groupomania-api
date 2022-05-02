@@ -3,37 +3,39 @@ const fs = require('fs/promises');
 const createError = require('http-errors');
 const { Post, User, Comment, Reaction, Report, Tagpost } = require('../models');
 
-//* TODO Check SQL request
+//* TODO Check SQL request // Get ALL comments too
 exports.getAllPosts = async (accessToken) => {
-  const userId = accessToken.user.id;
-  const userFound = await User.findOne({ where: { id: userId } });
+  const UserId = accessToken.user.id;
+  const userFound = await User.findOne({ where: { id: UserId } });
   if (!userFound) throw new createError[404]('User not found');
 
   const allPosts = await Post.findAll({
     order: ['createAt', 'DESC'],
-    include: [{
-      model: User,
-      attributes: ['id', 'username', 'firtsname', 'lastname', 'avatar'],
-    }, {
-      model: Tagpost,
-    }, {
-      model: Comment,
-      attributes: ['id'],
-    }, {
-      model: Reaction,
-    }, {
-      model: Report,
-    }],
+    // include: [{
+    //   model: User,
+    //   attributes: ['id', 'username', 'firtsname', 'lastname', 'avatar'],
+    // }, {
+    //   model: Tagpost,
+    // }, {
+    //   model: Comment,
+    //   attributes: ['id'],
+    // }, {
+    //   model: Reaction,
+    //   attributes: ['id', 'PostId', 'UserId'],
+    // }, {
+    //   model: Report,
+    //   attributes: ['UserId'],
+    // }],
   });
+
   if (!allPosts) throw new createError[404]('Posts not found');
 
   return allPosts;
 };
 
-//* TODO check SQL request
 exports.getPost = async (params, accessToken) => {
-  const userId = accessToken.user.id;
-  const userFound = await User.findOne({ where: { id: userId } });
+  const UserId = accessToken.user.id;
+  const userFound = await User.findOne({ where: { id: UserId } });
   if (!userFound) throw new createError[404]('User not found');
 
   const { postId } = params;
@@ -45,6 +47,7 @@ exports.getPost = async (params, accessToken) => {
       model: Tagpost,
     }, {
       model: Comment,
+      order: ['createdAt', 'DESC'],
       include: [{
         model: User,
         attributes: ['id', 'username', 'firstname', 'lastname', 'avatar'],
@@ -53,7 +56,7 @@ exports.getPost = async (params, accessToken) => {
       model: Reaction,
     }, {
       model: Report,
-      where: { userId },
+      attributes: ['UserId'],
     }],
   });
   if (!post) throw new createError[404]('Post not found');
@@ -66,13 +69,15 @@ exports.createPost = async (body, file, protocol, accessToken, host) => {
   const user = await User.findOne({ where: { id: UserId } });
   if (!user) throw new createError[404]('User not found');
 
+  const { title } = body;
+  if (!title) throw new createError[400]('Le champs title doit être rempli');
+
   const post = file ? {
     ...JSON.parse(body),
     media: `${protocol}://${host}/avatar/${file.filename}`,
-    UserId,
-  } : { ...body, UserId };
+  } : { ...body };
 
-  const newPost = await Post.create({ post });
+  const newPost = await Post.create({ ...post, UserId });
   if (!newPost) throw new createError[500]('Something went wrong, please try again');
 
   return newPost;
@@ -82,7 +87,6 @@ exports.modifyPost = async (params, body, file, protocol, host, accessToken) => 
   const { postId } = params;
   const postFound = await Post.findOne({ where: { id: postId } });
   if (!postFound) throw new createError[404]('Post not found');
-
   const UserId = accessToken.user.id;
   const userFound = await User.findOne({ where: { id: UserId } });
   if (!userFound) throw new createError[404]('User not found');
@@ -98,29 +102,29 @@ exports.modifyPost = async (params, body, file, protocol, host, accessToken) => 
 
   const updatedPost = await Post.update({ ...post }, { where: { id: postId } });
   if (!updatedPost) throw new createError[500]('Something went wrong, please try again');
-  //* TODO check fs link
-  if (file) fs.unlink(`public/images/${body.media}`);
+
+  if (file) fs.unlink(`public/images/${postFound.media}`);
 
   return post;
 };
 
 exports.deletePost = async (params, accessToken) => {
+  const UserId = accessToken.user.id;
+  const userFound = await User.findOne({ where: { id: UserId } });
+  if (!userFound) throw new createError[404]('User not found');
+
   const { postId } = params;
   const postFound = await Post.findOne({ where: { id: postId } });
   if (!postFound) throw new createError[404]('Post not found');
 
-  const userId = accessToken.user.id;
-  const userFound = await User.findOne({ where: { id: userId } });
-  if (!userFound) throw new createError[404]('User not found');
-
   if (userFound.role !== 'moderator') {
-    if (postFound.UserId !== userId) throw new createError[401]('Not authroized');
+    if (postFound.UserId !== UserId) throw new createError[401]('Not authroized');
   }
 
-  const deletedPost = await Post.delete({ where: { id: postId } });
+  const deletedPost = await Post.destroy({ where: { id: postId } });
   if (!deletedPost) throw new createError[500]('Something went wrong, please try again !');
 
-  fs.unlink(`public/images/${postFound.media}`);
+  if (postFound.media !== null) fs.unlink(`public/images/${postFound.media}`);
 
-  return deletedPost;
+  return postFound;
 };

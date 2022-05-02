@@ -6,7 +6,7 @@ exports.getAllPosts = async (req, res, next) => {
   const { accessToken } = req;
   try {
     const allPosts = await postService.getAllPosts(accessToken);
-    res.status(200).json({ message: 'Posts found', ...allPosts });
+    res.status(200).json({ message: 'Posts Found', allPosts });
   } catch (error) {
     next(error);
   }
@@ -16,7 +16,7 @@ exports.getPost = async (req, res, next) => {
   const { params, accessToken } = req;
   try {
     const post = await postService.getPost(params, accessToken);
-    res.status(200).json({ message: 'Post found', ...post });
+    res.status(200).json({ message: 'Post found', ...post.dataValues });
   } catch (error) {
     next(error);
   }
@@ -27,7 +27,7 @@ exports.createPost = async (req, res, next) => {
   const host = req.get('host');
   try {
     const createdPost = await postService.createPost(body, file, protocol, accessToken, host);
-    res.status(201).json({ message: 'Post created', ...createdPost });
+    res.status(201).json({ message: 'Post created', ...createdPost.dataValues });
   } catch (error) {
     next(error);
   }

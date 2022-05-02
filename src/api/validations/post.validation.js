@@ -15,3 +15,8 @@ exports.postSchema = yup.object({
   title: yup.string().trim().min(1).max(70).required(),
   textcontent: yup.string(),
 });
+
+exports.postEditSchema = yup.object({
+  title: yup.string().trim().min(1).max(70),
+  textcontent: yup.string(),
+});

@@ -37,7 +37,7 @@ exports.getMyAccount = async (params, accessToken) => {
   const user = await User.findOne({ where: { id: userId } });
   if (!user) throw new createError[404]('User not found');
 
-  return user;
+  return { ...user.dataValues, email: undefined, password: undefined };
 };
 
 exports.modifyAccount = async (params, body, file, protocol, accessToken, host) => {
@@ -70,8 +70,8 @@ exports.modifyAccount = async (params, body, file, protocol, accessToken, host) 
 
     //* Check if username is taken
     if (username) {
-      const userUsed = await User.findOne({ where: { username } });
-      if (userUsed) throw new createError[409]('This username is already used');
+      const usernameUsed = await User.findOne({ where: { username } });
+      if (usernameUsed) throw new createError[409]('This username is already used');
     }
 
     //* Check password
@@ -91,10 +91,11 @@ exports.modifyAccount = async (params, body, file, protocol, accessToken, host) 
       if (file && userFound.avatar !== `${protocol}://${host}/avatar/default-avatar.png`) {
         await fs.unlink(`public/avatar/${userFound.avatar}`.split('/avatar/')[1]);
       }
+
+      delete user.password;
+
       return user;
     }
-
-    if (user.password) delete user.password;
 
     const updatedUser = await User.update({ ...user }, { where: { id: userId } });
     if (!updatedUser) throw new createError[500]('Something went wrong, please try again !');
@@ -103,10 +104,12 @@ exports.modifyAccount = async (params, body, file, protocol, accessToken, host) 
       await fs.unlink(`public/avatar/${userFound.avatar}`.split('/avatar/')[1]);
     }
 
+    delete user.password;
+
     return user;
   }
 
-  if (user.password) delete user.password;
+  delete user.password;
 
   const updatedUser = await User.update({ ...user }, { where: { id: userId } });
   if (!updatedUser) throw new createError[500]('Something went wrong, please try again !');
@@ -115,15 +118,15 @@ exports.modifyAccount = async (params, body, file, protocol, accessToken, host) 
     await fs.unlink(`public/avatar/${userFound.avatar}`.split('/avatar/')[1]);
   }
 
-  return updatedUser;
+  return user;
 };
 
 exports.deleteAccount = async (body, params, accessToken, protocol, host) => {
   const userId = parseInt(params.userId, 10);
-  if (userId !== accessToken.user.id) throw new createError[401]('Not authorized ici ? ');
+  if (userId !== accessToken.user.id) throw new createError[401]('Not authorized');
 
   const user = await User.findOne({ where: { id: userId } });
-  if (!user) throw new createError[404]('User not found la');
+  if (!user) throw new createError[404]('User not found');
 
   const { password } = body;
   const match = await checkString(password, user.password);
@@ -132,9 +135,10 @@ exports.deleteAccount = async (body, params, accessToken, protocol, host) => {
   const deletedUser = await User.destroy({ where: { id: userId } });
   if (!deletedUser) throw new createError[500]('Something went wrong, please try again !');
 
-  //* TODO Check path to suppress files
-  const defaultAvatar = `${protocol}://${host}/avatar/default-avatar.png`;
-  if (user.avatar !== defaultAvatar) await fs.unlink(`/public/avatar/${user.avatar}`.split('/avatar/')[1]);
+  //* TODO Check lien path avatar
+  if (user.avatar !== `${protocol}://${host}/avatar/default-avatar.png`) {
+    await fs.unlink(`public/avatar/${user.avatar}`.split('/avatar/')[1]);
+  }
 
   return deletedUser;
 };

@@ -3,12 +3,10 @@
 //* TODO Remove logout from doc
 const userService = require('../services/user.service');
 
-//* TODO Verify params / query is good
 exports.getUser = async (req, res, next) => {
   const { params } = req;
   try {
     const userData = await userService.getAccount(params);
-    console.log({ ...userData });
     res.status(200).json({ message: 'User found', ...userData.dataValues });
   } catch (error) {
     next(error);
@@ -19,7 +17,7 @@ exports.getMyAccount = async (req, res, next) => {
   const { params, accessToken } = req;
   try {
     const myData = await userService.getMyAccount(params, accessToken);
-    res.status(201).json({ message: 'User found', ...myData });
+    res.status(201).json({ message: 'User found', ...myData.dataValues });
   } catch (error) {
     next(error);
   }
@@ -42,7 +40,7 @@ exports.deleteMyAccount = async (req, res, next) => {
   const host = req.get('host');
   try {
     const userDeleted = await userService.deleteAccount(body, params, accessToken, protocol, host);
-    res.status(201).json({ message: 'User deleted' }, ...userDeleted);
+    res.status(201).json({ message: 'User deleted', ...userDeleted });
   } catch (error) {
     next(error);
   }
