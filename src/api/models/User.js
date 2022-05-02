@@ -36,9 +36,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       defaultValue: 'user',
     },
+    //* TODO change doc default light / dark
     theme: {
-      type: DataTypes.INTEGER,
-      defaultValue: 0,
+      type: DataTypes.STRING,
+      defaultValue: 'light',
       allowNull: false,
     },
     retriever: {

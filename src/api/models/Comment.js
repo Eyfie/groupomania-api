@@ -27,10 +27,10 @@ module.exports = (sequelize, DataTypes) => {
     timestamps: true,
   });
   Comment.associate = (models) => {
-    Comment.hasMany(models.Comment, {
+    Comment.hasMany(models.Report, {
       onDelete: 'cascade',
     });
-    Comment.hasMany(models.Report, {
+    Comment.hasMany(models.Reaction, {
       onDelete: 'cascade',
     });
     Comment.belongsTo(models.User, {
@@ -41,11 +41,6 @@ module.exports = (sequelize, DataTypes) => {
     Comment.belongsTo(models.Post, {
       foreignKey: {
         allowNull: false,
-      },
-    });
-    Comment.belongsTo(models.Comment, {
-      foreignKey: {
-        allowNull: true,
       },
     });
   };
