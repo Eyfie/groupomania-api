@@ -39,5 +39,5 @@ exports.signupSchema = yup.object({
   lastname: yup.string().required(),
   email: yup.string().email().required(),
   password: yup.string().min(8).max(32).required(),
-  theme: yup.number().integer().required(),
+  theme: yup.string().matches(/(light|dark)/),
 });
