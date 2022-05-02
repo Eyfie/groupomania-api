@@ -45,23 +45,8 @@ exports.login = async (body) => {
   const { username, email, password } = body;
   const where = (typeof email === 'string') ? { email } : { username };
 
-  /* const where = {};
-
-  if (typeof email === 'string') where.email = email;
-  if (typeof username === 'string') where.username = username; */
-
   const user = await User.findOne({ where });
   if (!user) throw new createError[404]('User not found.');
-
-  /* const { username, email, password } = body;
-
-    const usernameFound = await User.findOne({ where: { userName: username } });
-    const emailFound = await User.findOne({ where: { email } });
-
-    try {
-      if (!usernameFound && !emailFound) return res.status(404).json({ message: 'User not found' });
-
-      const user = { ...usernameFound, ...emailFound }; */
 
   const match = await checkString(password, user.password);
   if (!match) throw new createError[401]('Not Authorized');
