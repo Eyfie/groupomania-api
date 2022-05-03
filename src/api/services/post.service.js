@@ -43,6 +43,7 @@ exports.getPost = async (params, accessToken) => {
     where: { id: postId },
     include: [{
       model: User,
+      attributes: ['id', 'username', 'firstname', 'lastname', 'avatar'],
     }, {
       model: Tagpost,
     }, {

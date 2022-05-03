@@ -27,7 +27,16 @@ exports.getAccount = async (params) => {
     }],
   });
   if (!userFound) throw new createError[404]('User not found');
-  return userFound;
+
+  return {
+    ...userFound.dataValues,
+    email: undefined,
+    password: undefined,
+    theme: undefined,
+    retriever: undefined,
+    retrieverDate: undefined,
+    role: undefined,
+  };
 };
 
 exports.getMyAccount = async (params, accessToken) => {
@@ -37,7 +46,15 @@ exports.getMyAccount = async (params, accessToken) => {
   const user = await User.findOne({ where: { id: userId } });
   if (!user) throw new createError[404]('User not found');
 
-  return { ...user.dataValues, email: undefined, password: undefined };
+  return {
+    ...user.dataValues,
+    email: undefined,
+    password: undefined,
+    retriever: undefined,
+    retrieverDate: undefined,
+    theme: undefined,
+    role: undefined,
+  };
 };
 
 exports.modifyAccount = async (params, body, file, protocol, accessToken, host) => {
@@ -92,9 +109,10 @@ exports.modifyAccount = async (params, body, file, protocol, accessToken, host) 
         await fs.unlink(`public/avatar/${userFound.avatar}`.split('/avatar/')[1]);
       }
 
-      delete user.password;
-
-      return user;
+      return {
+        ...user,
+        password: undefined,
+      };
     }
 
     const updatedUser = await User.update({ ...user }, { where: { id: userId } });
@@ -103,8 +121,6 @@ exports.modifyAccount = async (params, body, file, protocol, accessToken, host) 
     if (file && userFound.avatar !== `${protocol}://${host}/avatar/default-avatar.png`) {
       await fs.unlink(`public/avatar/${userFound.avatar}`.split('/avatar/')[1]);
     }
-
-    delete user.password;
 
     return user;
   }
