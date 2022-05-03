@@ -16,7 +16,7 @@ exports.eventSchema = yup.object({
   title: yup.string().min(1).max(70).required(),
   textcontent: yup.string().required(),
   location: yup.string().url().required(),
-  date: yup.date().require(),
+  date: yup.date().required(),
 });
 
 exports.eventEditSchema = yup.object({
