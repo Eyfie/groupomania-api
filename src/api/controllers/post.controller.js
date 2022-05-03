@@ -16,7 +16,7 @@ exports.getPost = async (req, res, next) => {
   const { params, accessToken } = req;
   try {
     const post = await postService.getPost(params, accessToken);
-    res.status(200).json({ message: 'Post found', ...post.dataValues });
+    res.status(200).json({ message: 'Post found', post });
   } catch (error) {
     next(error);
   }
