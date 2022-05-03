@@ -11,6 +11,7 @@ const postRoutes = require('./routes/post.route');
 const commentRoutes = require('./routes/comment.route');
 const reactionRoutes = require('./routes/reaction.route');
 const eventRoutes = require('./routes/event.route');
+const participantRoutes = require('./routes/participant.route');
 
 const app = express();
 require('dotenv').config();
@@ -35,6 +36,7 @@ app.use('/api/post', postRoutes);
 app.use('/api/comment', commentRoutes);
 app.use('/api/reaction', reactionRoutes);
 app.use('/api/event', eventRoutes);
+app.use('/api/participant', participantRoutes);
 
 //* Errors
 app.use('/api', errorHandler);
