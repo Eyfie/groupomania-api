@@ -1,5 +1,5 @@
 const createError = require('http-errors');
-const  { User } = require('../models/User');
+const { User } = require('../models');
 
 const rights = async (req, res, next) => {
   const { accessToken } = req;

@@ -14,7 +14,7 @@ exports.getEvent = async (req, res, next) => {
   const { params, accessToken } = req;
   try {
     const event = await eventService.getEvent(params, accessToken);
-    res.status(200).json({ message: 'Event found', event});
+    res.status(200).json({ message: 'Event found', event });
   } catch (error) {
     next(error);
   }
