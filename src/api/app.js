@@ -4,12 +4,14 @@ const path = require('path');
 const cors = require('cors');
 const errorHandler = require('./middlewares/errorHandler');
 const auth = require('./middlewares/auth');
+const rights = require('./middlewares/rights');
 
 const authRoutes = require('./routes/auth.route');
 const userRoutes = require('./routes/user.route');
 const postRoutes = require('./routes/post.route');
 const commentRoutes = require('./routes/comment.route');
 const reactionRoutes = require('./routes/reaction.route');
+const eventRoutes = require('./routes/event.route');
 
 const app = express();
 require('dotenv').config();
@@ -33,6 +35,12 @@ app.use('/api/user', userRoutes);
 app.use('/api/post', postRoutes);
 app.use('/api/comment', commentRoutes);
 app.use('/api/reaction', reactionRoutes);
+
+//* Check rights for following routes
+app.use('/api', rights);
+
+//* Routes
+app.use('/api/event', eventRoutes);
 
 //* Errors
 app.use('/api', errorHandler);
