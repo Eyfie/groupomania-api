@@ -36,8 +36,7 @@ exports.createReport = async (body, accessToken) => {
   const reportFound = await Report.findOne({ where: { ...where, UserId } });
   if (reportFound) throw new createError[409]('Report already exist');
 
-  const report = { ...body };
-  const newReport = await Report.create({ ...report, UserId });
+  const newReport = await Report.create({ ...body, UserId });
   if (!newReport) throw new createError[500]('Something went wrong, please try again');
 
   const allReports = await Report.findAll({ where });
