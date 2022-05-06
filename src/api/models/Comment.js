@@ -1,11 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
   const Comment = sequelize.define('Comment', {
-    id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      autoIncrement: true,
-      primaryKey: true,
-    },
     textcontent: {
       type: DataTypes.STRING,
       allowNull: true,
@@ -14,17 +8,6 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING.BINARY,
       allowNull: true,
     },
-    createdAt: {
-      type: DataTypes.DATE,
-      allowNull: false,
-    },
-    updatedAt: {
-      type: DataTypes.DATE,
-      allowNull: true,
-    },
-  }, {
-    tableName: 'comments',
-    timestamps: true,
   });
   Comment.associate = (models) => {
     Comment.hasMany(models.Report, {

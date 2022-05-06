@@ -1,15 +1,5 @@
-module.exports = (sequelize, DataTypes) => {
-  const Report = sequelize.define('Report', {
-    id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      autoIncrement: true,
-      primaryKey: true,
-    },
-  }, {
-    tableName: 'reports',
-    timestamps: false,
-  });
+module.exports = (sequelize) => {
+  const Report = sequelize.define('Report', {});
   Report.associate = (models) => {
     Report.belongsTo(models.User, {
       allowNull: false,

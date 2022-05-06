@@ -1,11 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
-    id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      autoIncrement: true,
-      primaryKey: true,
-    },
     username: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -50,17 +44,6 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DATE,
       allowNull: true,
     },
-    createdAt: {
-      type: DataTypes.DATE,
-      allowNull: false,
-    },
-    updatedAt: {
-      type: DataTypes.DATE,
-      allowNull: true,
-    },
-  }, {
-    tableName: 'users',
-    timestamps: true,
   });
   User.associate = (models) => {
     User.hasMany(models.Post, {
@@ -69,7 +52,9 @@ module.exports = (sequelize, DataTypes) => {
     User.hasMany(models.Comment, {
       onDelete: 'cascade',
     });
-    User.hasMany(models.Tagpro);
+    User.belongsToMany(models.Tagpro, {
+      through: 'UsersHasTags',
+    });
     User.hasMany(models.Event);
     User.hasMany(models.Report, {
       onDelete: 'cascade',
