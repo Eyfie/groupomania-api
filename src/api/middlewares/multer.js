@@ -5,12 +5,10 @@ const createError = require('http-errors');
 const WHITELIST = ['image/jpg', 'image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/svg'];
 
 const storage = multer.diskStorage({
-
   destination: (req, file, cb) => {
-    const { avatar } = req.body;
-    const imgType = (typeof avatar === 'string') ? 'avatar' : 'images';
+    const imgType = (file.fieldname === 'avatar') ? 'avatar' : 'images';
 
-    cb(null, `public/${imgType}`);
+    cb(null, `public/${imgType}/`);
   },
   filename: (req, file, cb) => {
     const name = file.originalname.split('.')[0].trim().split(' ').join('_');
@@ -28,7 +26,8 @@ module.exports = multer({
   storage,
   fileFilter: isValidFormat,
   limits: {
-
+    fileSize: 52428800,
+    files: 1,
   },
 }).fields([
   { name: 'avatar', maxCount: 1 },
