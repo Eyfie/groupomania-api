@@ -56,11 +56,9 @@ exports.login = async (body) => {
 
   return {
     ...user.dataValues,
-    email: undefined,
     password: undefined,
     retriever: undefined,
     retrieverDate: undefined,
-    role: undefined,
     accessToken,
     refreshToken,
   };
@@ -110,6 +108,8 @@ exports.modify = async (body, query) => {
 };
 
 exports.refreshToken = async (headers) => {
+  if (!headers.authorization) throw new createError[401]('No authorizations');
+
   const token = headers.authorization.split(' ')[1];
   if (!token) throw new createError[401]('You need to be logged in');
 

@@ -1,22 +1,14 @@
 /* eslint-disable max-len */
 const createError = require('http-errors');
-const { User, Tagpost } = require('../models');
+const { Tagpost } = require('../models');
 
-exports.getAllTagposts = async (accessToken) => {
-  const UserId = accessToken.user.id;
-  const userFound = await User.findOne({ where: { id: UserId } });
-  if (!userFound) throw new createError[404]('User not found');
-
+exports.getAllTagposts = async () => {
   const allTagposts = await Tagpost.findAll();
 
   return allTagposts;
 };
 
-exports.getTagpost = async (params, accessToken) => {
-  const UserId = accessToken.user.id;
-  const userFound = await User.findOne({ where: { id: UserId } });
-  if (!userFound) throw new createError[404]('User not found');
-
+exports.getTagpost = async (params) => {
   const { tagpostId } = params;
   const tagpostFound = await Tagpost.findOne({ where: { id: tagpostId } });
   if (!tagpostFound) throw new createError[404]('Tagpost not found');
@@ -24,11 +16,7 @@ exports.getTagpost = async (params, accessToken) => {
   return tagpostFound;
 };
 
-exports.createTagpost = async (body, accessToken) => {
-  const UserId = accessToken.user.id;
-  const userFound = await User.findOne({ where: { id: UserId } });
-  if (!userFound) throw new createError[404]('User not found');
-
+exports.createTagpost = async (body) => {
   const { name } = body;
   const tagpostFound = await Tagpost.findOne({ where: { name } });
   if (tagpostFound) throw new createError[409]('Tagpost already exist');
@@ -39,11 +27,7 @@ exports.createTagpost = async (body, accessToken) => {
   return newTagpost;
 };
 
-exports.modifyTagpost = async (params, body, accessToken) => {
-  const UserId = accessToken.user.id;
-  const userFound = await User.findOne({ where: { id: UserId } });
-  if (!userFound) throw new createError[404]('User not found');
-
+exports.modifyTagpost = async (params, body) => {
   const { tagpostId } = params;
   const tagpostFound = await Tagpost.findOne({ where: { id: tagpostId } });
   if (!tagpostFound) throw new createError[404]('Tagpost not found');
@@ -51,14 +35,12 @@ exports.modifyTagpost = async (params, body, accessToken) => {
   const updatedTagpost = await Tagpost.update({ ...body }, { where: { id: tagpostId } });
   if (!updatedTagpost) throw new createError[500]('Something went wrong, please try again');
 
-  return updatedTagpost;
+  const allTagpost = await Tagpost.findAll();
+
+  return allTagpost;
 };
 
-exports.deleteTagpost = async (params, accessToken) => {
-  const UserId = accessToken.user.id;
-  const userFound = await User.findOne({ where: { id: UserId } });
-  if (!userFound) throw new createError[404]('User not found');
-
+exports.deleteTagpost = async (params) => {
   const { tagpostId } = params;
   const tagpostFound = await Tagpost.findOne({ where: { id: tagpostId } });
   if (!tagpostFound) throw new createError[404]('Tagpost not found');
@@ -66,5 +48,7 @@ exports.deleteTagpost = async (params, accessToken) => {
   const deletedTagpost = await Tagpost.destroy({ where: { id: tagpostId } });
   if (!deletedTagpost) throw new createError[500]('Something went wrong, please try again !');
 
-  return deletedTagpost;
+  const allTagpost = await Tagpost.findAll();
+
+  return allTagpost;
 };

@@ -4,28 +4,24 @@ const createError = require('http-errors');
 const { Post, User, Comment, Reaction, Report, Tagpost } = require('../models');
 
 //* TODO Check SQL request // Get ALL comments too
-exports.getAllPosts = async (accessToken) => {
-  const UserId = accessToken.user.id;
-  const userFound = await User.findOne({ where: { id: UserId } });
-  if (!userFound) throw new createError[404]('User not found');
-
+exports.getAllPosts = async () => {
   const allPosts = await Post.findAll({
-    order: ['createAt', 'DESC'],
-    // include: [{
-    //   model: User,
-    //   attributes: ['id', 'username', 'firtsname', 'lastname', 'avatar'],
-    // }, {
-    //   model: Tagpost,
-    // }, {
-    //   model: Comment,
-    //   attributes: ['id'],
-    // }, {
-    //   model: Reaction,
-    //   attributes: ['id', 'PostId', 'UserId'],
-    // }, {
-    //   model: Report,
-    //   attributes: ['UserId'],
-    // }],
+    order: [['createdAt', 'DESC']],
+    include: [{
+      model: User,
+      attributes: ['id', 'username', 'firstname', 'lastname', 'avatar'],
+    }, {
+      model: Tagpost,
+    }, {
+      model: Comment,
+      attributes: ['id'],
+    }, {
+      model: Reaction,
+      attributes: ['id', 'PostId', 'UserId', 'type'],
+    }, {
+      model: Report,
+      attributes: ['id', 'UserId', 'PostId'],
+    }],
   });
 
   if (!allPosts) throw new createError[404]('Posts not found');
@@ -33,12 +29,9 @@ exports.getAllPosts = async (accessToken) => {
   return allPosts;
 };
 
-exports.getPost = async (params, accessToken) => {
-  const UserId = accessToken.user.id;
-  const userFound = await User.findOne({ where: { id: UserId } });
-  if (!userFound) throw new createError[404]('User not found');
-
+exports.getPost = async (params) => {
   const { postId } = params;
+
   const post = await Post.findOne({
     where: { id: postId },
     include: [{
@@ -49,15 +42,23 @@ exports.getPost = async (params, accessToken) => {
     }, {
       model: Comment,
       order: ['createdAt', 'DESC'],
-      include: [{
-        model: User,
-        attributes: ['id', 'username', 'firstname', 'lastname', 'avatar'],
-      }],
+      include: [
+        {
+          model: User,
+          attributes: ['id', 'username', 'firstname', 'lastname', 'avatar'],
+        },
+        {
+          model: Reaction,
+        },
+        {
+          model: Report,
+        },
+      ],
     }, {
       model: Reaction,
     }, {
       model: Report,
-      attributes: ['UserId'],
+      attributes: ['id', 'UserId', 'PostId', 'UserId'],
     }],
   });
   if (!post) throw new createError[404]('Post not found');
@@ -66,19 +67,11 @@ exports.getPost = async (params, accessToken) => {
 };
 
 exports.createPost = async (body, file, protocol, accessToken, host) => {
-  const UserId = accessToken.user.id;
-  const user = await User.findOne({ where: { id: UserId } });
-  if (!user) throw new createError[404]('User not found');
-
-  const { title } = body;
-  if (!title) throw new createError[400]('Le champs title doit être rempli');
-
   const post = file ? {
-    ...JSON.parse(body),
-    media: `${protocol}://${host}/avatar/${file.filename}`,
+    ...body, media: `${protocol}://${host}/images/${file.media[0].filename}`,
   } : { ...body };
 
-  const newPost = await Post.create({ ...post, UserId });
+  const newPost = await Post.create({ ...post, UserId: accessToken.user.id });
   if (!newPost) throw new createError[500]('Something went wrong, please try again');
 
   return newPost;
@@ -88,44 +81,47 @@ exports.modifyPost = async (params, body, file, protocol, host, accessToken) => 
   const { postId } = params;
   const postFound = await Post.findOne({ where: { id: postId } });
   if (!postFound) throw new createError[404]('Post not found');
-  const UserId = accessToken.user.id;
-  const userFound = await User.findOne({ where: { id: UserId } });
-  if (!userFound) throw new createError[404]('User not found');
 
-  if (userFound.role !== 'moderator') {
-    if (postFound.UserId !== UserId) throw new createError[401]('Not authroized');
+  if (accessToken.user.role !== 'moderator') {
+    if (postFound.UserId !== accessToken.user.id) throw new createError[401]('Not authorized');
   }
 
   const post = file ? {
-    ...JSON.parse(body),
-    media: `${protocol}://${host}/avatar/${file.filename}`,
+    ...body,
+    media: `${protocol}://${host}/images/${file.media[0].filename}`,
   } : { ...body };
 
   const updatedPost = await Post.update({ ...post }, { where: { id: postId } });
   if (!updatedPost) throw new createError[500]('Something went wrong, please try again');
 
-  if (file) fs.unlink(`public/images/${postFound.media}`);
+  if (postFound.media && (file || body.media === null)) await fs.unlink(`public/images/${postFound.media.split('/images/')[1]}`);
 
   return post;
 };
 
 exports.deletePost = async (params, accessToken) => {
-  const UserId = accessToken.user.id;
-  const userFound = await User.findOne({ where: { id: UserId } });
-  if (!userFound) throw new createError[404]('User not found');
-
   const { postId } = params;
   const postFound = await Post.findOne({ where: { id: postId } });
   if (!postFound) throw new createError[404]('Post not found');
 
-  if (userFound.role !== 'moderator') {
-    if (postFound.UserId !== UserId) throw new createError[401]('Not authroized');
+  if (accessToken.user.role !== 'moderator') {
+    if (postFound.UserId === accessToken.user.id) {
+      const deletedPost = await Post.destroy({ where: { id: postId } });
+
+      if (!deletedPost) throw new createError[500]('Something went wrong, please try again !');
+
+      if (postFound.media !== null) await fs.unlink(`public/images/${postFound.media.split('/images/')[1]}`);
+
+      return postFound;
+    }
+
+    throw new createError[401]('Not authorized');
   }
 
   const deletedPost = await Post.destroy({ where: { id: postId } });
   if (!deletedPost) throw new createError[500]('Something went wrong, please try again !');
 
-  if (postFound.media !== null) fs.unlink(`public/images/${postFound.media}`);
+  if (postFound.media !== null) await fs.unlink(`public/images/${postFound.media.split('/images/')[1]}`);
 
   return postFound;
 };

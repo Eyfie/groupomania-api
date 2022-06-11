@@ -1,22 +1,14 @@
 /* eslint-disable max-len */
 const createError = require('http-errors');
-const { User, Tagpro } = require('../models');
+const { Tagpro } = require('../models');
 
-exports.getAllTagpros = async (accessToken) => {
-  const UserId = accessToken.user.id;
-  const userFound = await User.findOne({ where: { id: UserId } });
-  if (!userFound) throw new createError[404]('User not found');
-
+exports.getAllTagpros = async () => {
   const allTagpros = await Tagpro.findAll();
 
   return allTagpros;
 };
 
-exports.getTagpro = async (params, accessToken) => {
-  const UserId = accessToken.user.id;
-  const userFound = await User.findOne({ where: { id: UserId } });
-  if (!userFound) throw new createError[404]('User not found');
-
+exports.getTagpro = async (params) => {
   const { tagproId } = params;
   const tagproFound = await Tagpro.findOne({ where: { id: tagproId } });
   if (!tagproFound) throw new createError[404]('Tagpro not found');
@@ -24,11 +16,7 @@ exports.getTagpro = async (params, accessToken) => {
   return tagproFound;
 };
 
-exports.createTagpro = async (body, accessToken) => {
-  const UserId = accessToken.user.id;
-  const userFound = await User.findOne({ where: { id: UserId } });
-  if (!userFound) throw new createError[404]('User not found');
-
+exports.createTagpro = async (body) => {
   const { name, type } = body;
   const tagproFound = await Tagpro.findOne({ where: { name, type } });
   if (tagproFound) throw new createError[409]('Tagpro already exist');
@@ -39,11 +27,7 @@ exports.createTagpro = async (body, accessToken) => {
   return newTagpro;
 };
 
-exports.modifyTagpro = async (params, body, accessToken) => {
-  const UserId = accessToken.user.id;
-  const userFound = await User.findOne({ where: { id: UserId } });
-  if (!userFound) throw new createError[404]('User not found');
-
+exports.modifyTagpro = async (params, body) => {
   const { tagproId } = params;
   const tagproFound = await Tagpro.findOne({ where: { id: tagproId } });
   if (!tagproFound) throw new createError[404]('Tagpro not found');
@@ -54,11 +38,7 @@ exports.modifyTagpro = async (params, body, accessToken) => {
   return updatedTagpro;
 };
 
-exports.deleteTagpro = async (params, accessToken) => {
-  const UserId = accessToken.user.id;
-  const userFound = await User.findOne({ where: { id: UserId } });
-  if (!userFound) throw new createError[404]('User not found');
-
+exports.deleteTagpro = async (params) => {
   const { tagproId } = params;
   const tagproFound = await Tagpro.findOne({ where: { id: tagproId } });
   if (!tagproFound) throw new createError[404]('Tagpro not found');

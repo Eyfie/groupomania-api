@@ -1,22 +1,14 @@
 /* eslint-disable max-len */
 const createError = require('http-errors');
-const { User, Participant } = require('../models');
+const { User, Participant, Event } = require('../models');
 
-exports.getAllParticipants = async (accessToken) => {
-  const UserId = accessToken.user.id;
-  const userFound = await User.findOne({ where: { id: UserId } });
-  if (!userFound) throw new createError[404]('User not found');
-
+exports.getAllParticipants = async () => {
   const allParticipants = await Participant.findAll();
 
   return allParticipants;
 };
 
-exports.getParticipant = async (params, accessToken) => {
-  const UserId = accessToken.user.id;
-  const userFound = await User.findOne({ where: { id: UserId } });
-  if (!userFound) throw new createError[404]('User not found');
-
+exports.getParticipant = async (params) => {
   const { participantId } = params;
   const participantFound = await Participant.findOne({ where: { id: participantId } });
   if (!participantFound) throw new createError[404]('Participant not found');
@@ -25,15 +17,14 @@ exports.getParticipant = async (params, accessToken) => {
 };
 
 exports.createParticipant = async (body, accessToken) => {
-  const UserId = accessToken.user.id;
-  const userFound = await User.findOne({ where: { id: UserId } });
-  if (!userFound) throw new createError[404]('User not found');
-
   const { EventId } = body;
-  const participantFound = await Participant.findOne({ where: { EventId, UserId } });
+  const eventFound = await Event.findOne({ where: { id: EventId } });
+  if (!eventFound) throw new createError[404]('Event not found');
+
+  const participantFound = await Participant.findOne({ where: { EventId, UserId: accessToken.user.id } });
   if (participantFound) throw new createError[409]('Participant already exist');
 
-  const newParticipant = await Participant.create({ ...body, UserId });
+  const newParticipant = await Participant.create({ ...body, UserId: accessToken.user.id });
   if (!newParticipant) throw new createError[500]('Something went wrong, please try again');
 
   const allParticipants = await Participant.findAll({ where: { EventId } });
@@ -42,22 +33,16 @@ exports.createParticipant = async (body, accessToken) => {
 };
 
 exports.modifyParticipant = async (params, body, accessToken) => {
-  const UserId = accessToken.user.id;
-  const userFound = await User.findOne({ where: { id: UserId } });
-  if (!userFound) throw new createError[404]('User not found');
-
   const { participantId } = params;
   const participantFound = await Participant.findOne({ where: { id: participantId } });
   if (!participantFound) throw new createError[404]('Participant not found');
-  if (participantFound.UserId !== UserId) throw new createError[401]('Not Authorized');
+  if (participantFound.UserId !== accessToken.user.id) throw new createError[401]('Not Authorized');
 
-  const participant = (participantFound.type === body.type) ? { ...participantFound, type: null } : { ...participantFound, type: body.type };
-
-  const updatedParticipant = await Participant.update({ ...participant }, { where: { id: participantId } });
+  const updatedParticipant = await Participant.update({ ...body }, { where: { id: participantId } });
   if (!updatedParticipant) throw new createError[500]('Something went wrong, please try again');
 
   const { EventId } = participantFound;
-  const allParticipants = await Participant.findAll({ where: { id: EventId } });
+  const allParticipants = await Participant.findAll({ where: { EventId } });
 
   return allParticipants;
 };
@@ -76,7 +61,7 @@ exports.deleteParticipant = async (params, accessToken) => {
   if (!deletedParticipant) throw new createError[500]('Something went wrong, please try again !');
 
   const { EventId } = participantFound;
-  const allParticipants = await Participant.findAll({ where: { id: EventId } });
+  const allParticipants = await Participant.findAll({ where: { EventId } });
 
   return allParticipants;
 };

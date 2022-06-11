@@ -3,14 +3,35 @@
 const fs = require('fs/promises');
 const createError = require('http-errors');
 const { hashString, checkString } = require('../helpers/encrypter');
-const { User, Post, Reaction, Comment, Report, Tagpost } = require('../models');
+const { User, Post, Reaction, Comment, Report, Tagpost, Tagpro } = require('../models');
 
-exports.getAccount = async (params) => {
-  const { userId } = params;
+exports.getMe = async (accessToken) => {
+  const userId = accessToken.user.id;
+
+  const user = await User.findOne({
+    where: { id: userId },
+    include: [{
+      model: Tagpro,
+    }],
+  });
+  if (!user) throw new createError[404]('User not found');
+
+  return {
+    ...user.dataValues,
+    password: undefined,
+    retriever: undefined,
+    retrieverDate: undefined,
+  };
+};
+
+exports.getUser = async (params) => {
+  const userId = parseInt(params.userId, 10);
 
   const userFound = await User.findOne({
     where: { id: userId },
     include: [{
+      model: Tagpro,
+    }, {
       model: Post,
       order: ['createdAt', 'DESC'],
       include: [{
@@ -30,50 +51,27 @@ exports.getAccount = async (params) => {
 
   return {
     ...userFound.dataValues,
-    email: undefined,
     password: undefined,
     theme: undefined,
     retriever: undefined,
     retrieverDate: undefined,
-    role: undefined,
   };
 };
 
-exports.getMyAccount = async (params, accessToken) => {
+exports.modifyUser = async (params, body, file, protocol, accessToken, host) => {
   const userId = parseInt(params.userId, 10);
   if (userId !== accessToken.user.id) throw new createError[401]('Not authorized');
 
-  const user = await User.findOne({ where: { id: userId } });
-  if (!user) throw new createError[404]('User not found');
-
-  return {
-    ...user.dataValues,
-    email: undefined,
-    password: undefined,
-    retriever: undefined,
-    retrieverDate: undefined,
-    theme: undefined,
-    role: undefined,
-  };
-};
-
-exports.modifyAccount = async (params, body, file, protocol, accessToken, host) => {
-  const userId = parseInt(params.userId, 10);
-  if (userId !== accessToken.user.id) throw new createError[401]('Not authorized');
-
-  //* Check if user exist
   const userFound = await User.findOne({ where: { id: userId } });
   if (!userFound) throw new createError[404]('User not found');
 
-  //* Add avatar if it exist in request body
   const user = file ? {
-    ...JSON.parse(body),
-    avatar: `${protocol}://${host}/avatar/${file.filename}`,
+    ...body,
+    avatar: `${protocol}://${host}/avatar/${file.avatar[0].filename}`,
   } : { ...body };
 
   if (user === userFound) return false;
 
-  //* Check user password if changes are made on critical informations
   if (user.newpassword || user.email || user.username) {
     //* Check if password is missing
     const { password, newpassword, email, username } = user;
@@ -106,7 +104,7 @@ exports.modifyAccount = async (params, body, file, protocol, accessToken, host) 
       if (!updatedUser) throw new createError[500]('Something went wrong, please try again !');
 
       if (file && userFound.avatar !== `${protocol}://${host}/avatar/default-avatar.png`) {
-        await fs.unlink(`public/avatar/${userFound.avatar}`.split('/avatar/')[1]);
+        await fs.unlink(`public/avatar/${userFound.avatar.split('/avatar/')[1]}`);
       }
 
       return {
@@ -115,11 +113,13 @@ exports.modifyAccount = async (params, body, file, protocol, accessToken, host) 
       };
     }
 
+    delete user.password;
+
     const updatedUser = await User.update({ ...user }, { where: { id: userId } });
     if (!updatedUser) throw new createError[500]('Something went wrong, please try again !');
 
     if (file && userFound.avatar !== `${protocol}://${host}/avatar/default-avatar.png`) {
-      await fs.unlink(`public/avatar/${userFound.avatar}`.split('/avatar/')[1]);
+      await fs.unlink(`public/avatar/${userFound.avatar.split('/avatar/')[1]}`);
     }
 
     return user;
@@ -131,13 +131,13 @@ exports.modifyAccount = async (params, body, file, protocol, accessToken, host) 
   if (!updatedUser) throw new createError[500]('Something went wrong, please try again !');
 
   if (file && userFound.avatar !== `${protocol}://${host}/avatar/default-avatar.png`) {
-    await fs.unlink(`public/avatar/${userFound.avatar}`.split('/avatar/')[1]);
+    await fs.unlink(`public/avatar/${userFound.avatar.split('/avatar/')[1]}`);
   }
 
   return user;
 };
 
-exports.deleteAccount = async (body, params, accessToken, protocol, host) => {
+exports.deleteUser = async (body, params, accessToken, protocol, host) => {
   const userId = parseInt(params.userId, 10);
   if (userId !== accessToken.user.id) throw new createError[401]('Not authorized');
 
@@ -151,9 +151,8 @@ exports.deleteAccount = async (body, params, accessToken, protocol, host) => {
   const deletedUser = await User.destroy({ where: { id: userId } });
   if (!deletedUser) throw new createError[500]('Something went wrong, please try again !');
 
-  //* TODO Check lien path avatar
   if (user.avatar !== `${protocol}://${host}/avatar/default-avatar.png`) {
-    await fs.unlink(`public/avatar/${user.avatar}`.split('/avatar/')[1]);
+    await fs.unlink(`public/avatar/${user.avatar.split('/avatar/')[1]}`);
   }
 
   return deletedUser;
