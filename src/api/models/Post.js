@@ -15,21 +15,19 @@ module.exports = (sequelize, DataTypes) => {
   });
   Post.associate = (models) => {
     Post.hasMany(models.Comment, {
-      onDelete: 'cascade',
+      onDelete: 'CASCADE',
     });
     Post.hasMany(models.Reaction, {
-      onDelete: 'cascade',
+      onDelete: 'CASCADE',
     });
     Post.belongsToMany(models.Tagpost, {
       through: 'PostsHasTags',
     });
     Post.hasMany(models.Report, {
-      onDelete: 'cascade',
+      onDelete: 'CASCADE',
     });
     Post.belongsTo(models.User, {
-      foreignKey: {
-        allowNull: false,
-      },
+      onDelete: 'CASCADE',
     });
   };
   return Post;

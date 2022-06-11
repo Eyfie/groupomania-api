@@ -2,13 +2,13 @@ module.exports = (sequelize) => {
   const Report = sequelize.define('Report', {});
   Report.associate = (models) => {
     Report.belongsTo(models.User, {
-      allowNull: false,
+      onDelete: 'CASCADE',
     });
     Report.belongsTo(models.Post, {
-      allowNull: true,
+      onDelete: 'CASCADE',
     });
     Report.belongsTo(models.Comment, {
-      allowNull: true,
+      onDelete: 'CASCADE',
     });
   };
   return Report;

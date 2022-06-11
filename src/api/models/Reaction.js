@@ -2,24 +2,18 @@ module.exports = (sequelize, DataTypes) => {
   const Reaction = sequelize.define('Reaction', {
     type: {
       type: DataTypes.STRING,
-      allowNull: true,
+      allowNull: false,
     },
   });
   Reaction.associate = (models) => {
     Reaction.belongsTo(models.Post, {
-      foreignKey: {
-        allowNull: true,
-      },
+      onDelete: 'CASCADE',
     });
     Reaction.belongsTo(models.Comment, {
-      foreignKey: {
-        allowNull: true,
-      },
+      onDelete: 'CASCADE',
     });
     Reaction.belongsTo(models.User, {
-      foreignKey: {
-        allowNull: false,
-      },
+      onDelete: 'CASCADE',
     });
   };
   return Reaction;

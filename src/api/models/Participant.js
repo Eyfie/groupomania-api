@@ -7,14 +7,10 @@ module.exports = (sequelize, DataTypes) => {
   });
   Participant.associate = (models) => {
     Participant.belongsTo(models.Event, {
-      foreignKey: {
-        allowNull: false,
-      },
+      onDelete: 'CASCADE',
     });
     Participant.belongsTo(models.User, {
-      foreignKey: {
-        allowNull: false,
-      },
+      onDelete: 'CASCADE',
     });
   };
   return Participant;

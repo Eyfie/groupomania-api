@@ -19,12 +19,10 @@ module.exports = (sequelize, DataTypes) => {
   });
   Event.associate = (models) => {
     Event.hasMany(models.Participant, {
-      onDelete: 'cascade',
+      onDelete: 'CASCADE',
     });
     Event.belongsTo(models.User, {
-      foreignKey: {
-        allowNull: false,
-      },
+      onDelete: 'CASCADE',
     });
   };
   return Event;

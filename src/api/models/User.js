@@ -13,6 +13,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
+    description: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     email: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -30,7 +34,6 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       defaultValue: 'user',
     },
-    //* TODO change doc default light / dark
     theme: {
       type: DataTypes.STRING,
       defaultValue: 'light',
@@ -47,17 +50,19 @@ module.exports = (sequelize, DataTypes) => {
   });
   User.associate = (models) => {
     User.hasMany(models.Post, {
-      onDelete: 'cascade',
+      onDelete: 'CASCADE',
     });
     User.hasMany(models.Comment, {
-      onDelete: 'cascade',
+      onDelete: 'CASCADE',
     });
     User.belongsToMany(models.Tagpro, {
       through: 'UsersHasTags',
     });
-    User.hasMany(models.Event);
+    User.hasMany(models.Event, {
+      onDelete: 'CASCADE',
+    });
     User.hasMany(models.Report, {
-      onDelete: 'cascade',
+      onDelete: 'CASCADE',
     });
   };
   return User;

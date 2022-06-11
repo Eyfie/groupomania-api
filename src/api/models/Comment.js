@@ -11,20 +11,16 @@ module.exports = (sequelize, DataTypes) => {
   });
   Comment.associate = (models) => {
     Comment.hasMany(models.Report, {
-      onDelete: 'cascade',
+      onDelete: 'CASCADE',
     });
     Comment.hasMany(models.Reaction, {
-      onDelete: 'cascade',
+      onDelete: 'CASCADE',
     });
     Comment.belongsTo(models.User, {
-      foreignKey: {
-        allowNull: false,
-      },
+      onDelete: 'CASCADE',
     });
     Comment.belongsTo(models.Post, {
-      foreignKey: {
-        allowNull: false,
-      },
+      onDelete: 'CASCADE',
     });
   };
   return Comment;
