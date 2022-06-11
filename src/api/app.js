@@ -6,6 +6,7 @@ const helmet = require('helmet');
 const cors = require('./middlewares/cors');
 const errorHandler = require('./middlewares/errorHandler');
 const auth = require('./middlewares/auth');
+const limiter = require('./middlewares/limiter');
 
 const authRoutes = require('./routes/auth.route');
 const userRoutes = require('./routes/user.route');
@@ -32,6 +33,9 @@ app.use(express.json({ limit: '50mb' }));
 app.use(cookieParser());
 
 app.use(helmet());
+
+//* API Calls limiter
+app.use('/api/', limiter.apiLimiter);
 
 //* Paths
 app.use('/avatar', express.static(path.join(__dirname, '../../public/avatar')));
