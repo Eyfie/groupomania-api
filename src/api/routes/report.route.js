@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const validation = require('../middlewares/validation');
+const rights = require('../middlewares/rights');
 const report = require('../controllers/report.controller');
 const { reportSchema } = require('../validations/report.validation');
 
@@ -8,7 +9,6 @@ router.get('/:reportId', report.getReport);
 router.post('/', (...args) => validation(reportSchema, ...args), report.createReport);
 router.patch('/:reportId', (...args) => validation(reportSchema, ...args), report.modifyReport);
 router.delete('/:reportId', report.deleteReport);
-//* TODO route to delete all report
-router.delete('/', report.deleteAllReports);
+router.delete('/', rights, report.deleteAllReports);
 
 module.exports = router;
