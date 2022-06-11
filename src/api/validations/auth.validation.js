@@ -16,7 +16,6 @@ exports.forgotSchema = yup.object({
 });
 
 exports.loginSchema = yup.object({
-  email: yup.string().email(),
   username: yup.string(),
   password: yup.string()
     .required(),
@@ -32,6 +31,8 @@ exports.signupSchema = yup.object({
   firstname: yup.string().required(),
   lastname: yup.string().required(),
   email: yup.string().email().required(),
-  password: yup.string().min(8).max(24).required(),
+  password: yup.string().min(8).max(24)
+    .matches(/(?=.*?[a-z])(?=.*?[A-Z])(?=.*?[0-9])/)
+    .required(),
   theme: yup.string().matches(/(light|dark)/),
 });
