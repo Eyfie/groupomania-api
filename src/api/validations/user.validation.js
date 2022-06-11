@@ -17,6 +17,7 @@ exports.accountSchema = yup.object({
   username: yup.string(),
   firstname: yup.string(),
   lastname: yup.string(),
+  description: yup.string(),
   password: yup.string().min(8).max(32),
   newpassword: yup.string().min(8).max(32),
   email: yup.string().email(),

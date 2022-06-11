@@ -1,22 +1,18 @@
 /* eslint-disable newline-per-chained-call */
 const yup = require('yup');
 
-yup.setLocale({
-  mixed: {
-    required: ({ path }) => `Le champ ${path} doit être rempli`,
-  },
-  string: {
-    min: ({ path, min }) => `Le champ ${path} doit contenir au moins ${min} caractères`,
-    max: ({ path, max }) => `Le champ ${path} doit contenir au maximum ${max} caractères`,
-  },
-});
-
-exports.postSchema = yup.object({
-  title: yup.string().trim().min(1).max(70).required(),
-  textcontent: yup.string(),
-});
-
-exports.postEditSchema = yup.object({
-  title: yup.string().trim().min(1).max(70),
-  textcontent: yup.string(),
-});
+exports.postSchema = yup.object().shape({
+  title: yup.string().required(),
+  textcontent: yup.string()
+    .when('media', {
+      is: (media) => !media,
+      then: yup.string()
+        .required('Le post doit contenir une image ou du texte'),
+    }),
+  media: yup.mixed()
+    .when('textcontent', {
+      is: (textcontent) => !textcontent,
+      then: yup.mixed()
+        .required('Le post doit contenir contenir une image ou du texte'),
+    }),
+}, [['textcontent', 'media']]);

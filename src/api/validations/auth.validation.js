@@ -6,12 +6,8 @@ yup.setLocale({
   },
   string: {
     email: 'Le format de cet email n\'est pas correct',
-    min: 'Le mot de passe doit contenir au moins 8 caractères',
-    max: 'Le mot de passe peut contenir 32 caractères au maximum',
-    matches: 'Le mot de passe doit contenir une majuscule, une minuscule et un chiffre au minimum',
-    username: 'Votre pseudo n\'est pas dans un format correct',
-    firstname: 'Votre prénom n\'est pas dans un format correct',
-    lastname: 'Votre nom n\'est pas dans un format correct',
+    min: ({ min }) => `Le mot de passe doit contenir au moins ${min} caractères`,
+    max: ({ max }) => `Le mot de passe peut contenir ${max} caractères au maximum`,
   },
 });
 
@@ -23,8 +19,6 @@ exports.loginSchema = yup.object({
   email: yup.string().email(),
   username: yup.string(),
   password: yup.string()
-    .min(8)
-    .max(32)
     .required(),
 });
 
@@ -38,6 +32,6 @@ exports.signupSchema = yup.object({
   firstname: yup.string().required(),
   lastname: yup.string().required(),
   email: yup.string().email().required(),
-  password: yup.string().min(8).max(32).required(),
+  password: yup.string().min(8).max(24).required(),
   theme: yup.string().matches(/(light|dark)/),
 });
