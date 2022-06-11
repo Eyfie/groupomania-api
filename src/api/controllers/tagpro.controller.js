@@ -1,29 +1,28 @@
 const tagproService = require('../services/tagpro.service');
 
 exports.getAllTagpros = async (req, res, next) => {
-  const { accessToken } = req;
   try {
-    const allTagpros = await tagproService.getAllTagpros(accessToken);
-    res.status(200).json({ message: 'Tagpros found', allTagpros });
+    const Tagpros = await tagproService.getAllTagpros();
+    res.status(200).json({ message: 'Tagpros found', Tagpros });
   } catch (error) {
     next(error);
   }
 };
 
 exports.getTagpro = async (req, res, next) => {
-  const { params, accessToken } = req;
+  const { params } = req;
   try {
-    const tagpro = await tagproService.getTagpro(params, accessToken);
-    res.status(200).json({ message: 'Tagpro found', tagpro });
+    const Tagpro = await tagproService.getTagpro(params);
+    res.status(200).json({ message: 'Tagpro found', Tagpro });
   } catch (error) {
     next(error);
   }
 };
 
 exports.createTagpro = async (req, res, next) => {
-  const { body, accessToken } = req;
+  const { body } = req;
   try {
-    const newTagpro = await tagproService.createTagpro(body, accessToken);
+    const newTagpro = await tagproService.createTagpro(body);
     res.status(201).json({ message: 'Tagpro created', newTagpro });
   } catch (error) {
     next(error);
@@ -31,20 +30,20 @@ exports.createTagpro = async (req, res, next) => {
 };
 
 exports.modifyTagpro = async (req, res, next) => {
-  const { params, body, accessToken } = req;
+  const { params, body } = req;
   try {
-    const updatedTagpro = await tagproService.modifyTagpro(params, body, accessToken);
-    res.status(200).json({ message: 'Tagpro updated', updatedTagpro });
+    const Tagpro = await tagproService.modifyTagpro(params, body);
+    res.status(200).json({ message: 'Tagpro updated', Tagpro });
   } catch (error) {
     next(error);
   }
 };
 
 exports.deleteTagpro = async (req, res, next) => {
-  const { params, accessToken } = req;
+  const { params } = req;
   try {
-    const deletedTagpro = await tagproService.deleteTagpro(params, accessToken);
-    res.status({ message: 'Tagpro deleted', deletedTagpro });
+    const deletedTagpro = await tagproService.deleteTagpro(params);
+    res.status(200).json({ message: 'Tagpro deleted', deletedTagpro });
   } catch (error) {
     next(error);
   }

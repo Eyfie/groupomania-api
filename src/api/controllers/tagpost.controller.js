@@ -1,50 +1,49 @@
 const tagpostService = require('../services/tagpost.service');
 
 exports.getAllTagposts = async (req, res, next) => {
-  const { accessToken } = req;
   try {
-    const allTagposts = await tagpostService.getAllTagposts(accessToken);
-    res.status(200).json({ message: 'Tagposts found', allTagposts });
+    const Tagposts = await tagpostService.getAllTagposts();
+    res.status(200).json({ message: 'Tagposts found', Tagposts });
   } catch (error) {
     next(error);
   }
 };
 
 exports.getTagpost = async (req, res, next) => {
-  const { params, accessToken } = req;
+  const { params } = req;
   try {
-    const tagpost = await tagpostService.getTagpost(params, accessToken);
-    res.status(200).json({ message: 'Tagpost found', tagpost });
+    const Tagpost = await tagpostService.getTagpost(params);
+    res.status(200).json({ message: 'Tagpost found', Tagpost });
   } catch (error) {
     next(error);
   }
 };
 
 exports.createTagpost = async (req, res, next) => {
-  const { body, accessToken } = req;
+  const { body } = req;
   try {
-    const newTagpost = await tagpostService.createTagpost(body, accessToken);
-    res.status(201).json({ message: 'Tagpost created', newTagpost });
+    const Tagpost = await tagpostService.createTagpost(body);
+    res.status(201).json({ message: 'Tagpost created', Tagpost });
   } catch (error) {
     next(error);
   }
 };
 
 exports.modifyTagpost = async (req, res, next) => {
-  const { params, body, accessToken } = req;
+  const { params, body } = req;
   try {
-    const updatedTagpost = await tagpostService.modifyTagpost(params, body, accessToken);
-    res.status(200).json({ message: 'Tagpost updated', updatedTagpost });
+    const Tagposts = await tagpostService.modifyTagpost(params, body);
+    res.status(200).json({ message: 'Tagpost updated', Tagposts });
   } catch (error) {
     next(error);
   }
 };
 
 exports.deleteTagpost = async (req, res, next) => {
-  const { params, accessToken } = req;
+  const { params } = req;
   try {
-    const deletedTagpost = await tagpostService.deleteTagpost(params, accessToken);
-    res.status({ message: 'Tagpost deleted', deletedTagpost });
+    const Tagposts = await tagpostService.deleteTagpost(params);
+    res.status(200).json({ message: 'Tagpost deleted', Tagposts });
   } catch (error) {
     next(error);
   }

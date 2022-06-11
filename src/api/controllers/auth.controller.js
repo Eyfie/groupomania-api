@@ -5,8 +5,8 @@ exports.signup = async (req, res, next) => {
   const { body, protocol } = req;
   const host = req.get('host');
   try {
-    const user = await authService.signup(body, protocol, host);
-    res.status(201).json({ message: 'User successfully created !', ...user });
+    const User = await authService.signup(body, protocol, host);
+    res.status(201).json({ message: 'User successfully created !', User });
   } catch (error) {
     next(error);
   }
@@ -15,8 +15,14 @@ exports.signup = async (req, res, next) => {
 exports.login = async (req, res, next) => {
   const { body } = req;
   try {
-    const user = await authService.login(body);
-    res.status(200).json({ message: 'Successfully logged in !', user });
+    const User = await authService.login(body);
+    res.cookie('jwt', User.refreshToken, {
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000,
+    });
+
+    User.refreshToken = undefined;
+    res.status(200).json({ message: 'Successfully logged in !', User });
   } catch (error) {
     next(error);
   }
@@ -32,7 +38,7 @@ exports.forgot = async (req, res, next) => {
     next(error);
   }
 };
-//* TODO Verify Query / Params
+
 exports.modify = async (req, res, next) => {
   const { body, query } = req;
   try {

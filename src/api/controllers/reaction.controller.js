@@ -1,10 +1,9 @@
 const reactionService = require('../services/reaction.service');
 
 exports.getAllReactions = async (req, res, next) => {
-  const { accessToken } = req;
   try {
-    const allReactions = await reactionService.getAllReactions(accessToken);
-    res.status(200).json({ message: 'Reactions found', allReactions });
+    const Reactions = await reactionService.getAllReactions();
+    res.status(200).json({ message: 'Reactions found', Reactions });
   } catch (error) {
     next(error);
   }
@@ -13,8 +12,8 @@ exports.getAllReactions = async (req, res, next) => {
 exports.getReaction = async (req, res, next) => {
   const { params, accessToken } = req;
   try {
-    const reaction = await reactionService.getReaction(params, accessToken);
-    res.status(200).json({ message: 'Reaction found', reaction });
+    const Reaction = await reactionService.getReaction(params, accessToken);
+    res.status(200).json({ message: 'Reaction found', Reaction });
   } catch (error) {
     next(error);
   }
@@ -23,8 +22,8 @@ exports.getReaction = async (req, res, next) => {
 exports.createReaction = async (req, res, next) => {
   const { body, accessToken } = req;
   try {
-    const newReaction = await reactionService.createReaction(body, accessToken);
-    res.status(201).json({ message: 'Reaction created', newReaction });
+    const Reactions = await reactionService.createReaction(body, accessToken);
+    res.status(201).json({ message: 'Reaction created', Reactions });
   } catch (error) {
     next(error);
   }
@@ -33,8 +32,8 @@ exports.createReaction = async (req, res, next) => {
 exports.modifyReaction = async (req, res, next) => {
   const { params, body, accessToken } = req;
   try {
-    const updatedReaction = await reactionService.modifyReaction(params, body, accessToken);
-    res.status(200).json({ message: 'Reaction updated', updatedReaction });
+    const Reactions = await reactionService.modifyReaction(params, body, accessToken);
+    res.status(200).json({ message: 'Reaction updated', Reactions });
   } catch (error) {
     next(error);
   }
@@ -43,8 +42,8 @@ exports.modifyReaction = async (req, res, next) => {
 exports.deleteReaction = async (req, res, next) => {
   const { params, accessToken } = req;
   try {
-    const deletedReaction = await reactionService.deleteReaction(params, accessToken);
-    res.status({ message: 'Reaction deleted', deletedReaction });
+    const Reactions = await reactionService.deleteReaction(params, accessToken);
+    res.status(200).json({ message: 'Reaction deleted', Reactions });
   } catch (error) {
     next(error);
   }

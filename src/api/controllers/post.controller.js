@@ -3,42 +3,45 @@
 const postService = require('../services/post.service');
 
 exports.getAllPosts = async (req, res, next) => {
-  const { accessToken } = req;
   try {
-    const allPosts = await postService.getAllPosts(accessToken);
-    res.status(200).json({ message: 'Posts Found', allPosts });
+    const Posts = await postService.getAllPosts();
+    res.status(200).json({ message: 'Posts Found', Posts });
   } catch (error) {
     next(error);
   }
 };
 
 exports.getPost = async (req, res, next) => {
-  const { params, accessToken } = req;
+  const { params } = req;
   try {
-    const post = await postService.getPost(params, accessToken);
-    res.status(200).json({ message: 'Post found', post });
+    const Post = await postService.getPost(params);
+    res.status(200).json({ message: 'Post found', Post });
   } catch (error) {
     next(error);
   }
 };
 
 exports.createPost = async (req, res, next) => {
-  const { body, file, protocol, accessToken } = req;
+  const { body, files, protocol, accessToken } = req;
+
   const host = req.get('host');
   try {
-    const createdPost = await postService.createPost(body, file, protocol, accessToken, host);
-    res.status(201).json({ message: 'Post created', ...createdPost.dataValues });
+    const Post = await postService.createPost(body, files, protocol, accessToken, host);
+    res.status(201).json({ message: 'Post created', Post });
   } catch (error) {
     next(error);
   }
 };
 
 exports.modifyPost = async (req, res, next) => {
-  const { params, body, file, protocol, accessToken } = req;
+  const { params, body, files, protocol, accessToken } = req;
   const host = req.get('host');
+
+  if (files) delete body.media;
+
   try {
-    const updatedPost = await postService.modifyPost(params, body, file, protocol, host, accessToken);
-    res.status(200).json({ message: 'Post updated', ...updatedPost });
+    const Post = await postService.modifyPost(params, body, files, protocol, host, accessToken);
+    res.status(200).json({ message: 'Post updated', Post });
   } catch (error) {
     next(error);
   }
@@ -47,8 +50,8 @@ exports.modifyPost = async (req, res, next) => {
 exports.deletePost = async (req, res, next) => {
   const { params, accessToken } = req;
   try {
-    const deletedPost = await postService.deletePost(params, accessToken);
-    res.status(200).json({ message: 'Post deleted', ...deletedPost });
+    const Post = await postService.deletePost(params, accessToken);
+    res.status(200).json({ message: 'Post deleted', Post });
   } catch (error) {
     next(error);
   }
