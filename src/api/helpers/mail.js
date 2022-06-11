@@ -12,10 +12,10 @@ const mail = (email, username, retriever) => {
   `;
   const transporter = nodemailer.createTransport({
     host: 'smtp.mailtrap.io',
-    port: 2525,
+    port: process.env.PORT_SMTP,
     auth: {
-      user: '090fa9dd4d3cfb',
-      pass: '69d80293f4e319',
+      user: process.env.USER_SMTP,
+      pass: process.env.PWD_SMTP,
     },
   });
 
