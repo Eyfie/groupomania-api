@@ -6,7 +6,7 @@ const mail = (email, username, retriever) => {
   const message = `
   <h1>Changement de mot de passe</h1>
   <p>Veuillez cliquer sur le lien ci-dessous :</p>
-  <a href="https://127.0.0.1:4200/forgot/modify?username=${username}&retriever=${retriever}">Changement de Mot de Passe</a>
+  <a href="http://localhost:3000/modify?username=${username}&retriever=${retriever}">Changement de Mot de Passe</a>
   <p>Vous disposez de 10 minutes pour changer de mot de passe à la réception de ce mail.</p>
   <p>Bonne journée !</p>
   `;
