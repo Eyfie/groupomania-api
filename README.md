@@ -33,6 +33,17 @@ npx sequelize-cli db:seed:all
 cd ..
 ```
 
+- Demo Users
+```
+username: Johnny
+pass: moderator
+role: moderator
+
+username: Bron
+pass: user
+role: user 
+```
+
 ### SMTP setup
 
 Now that we've got our database I invite you to create an account on [mailtrap](https://mailtrap.io/).
