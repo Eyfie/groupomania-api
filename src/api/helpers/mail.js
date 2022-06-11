@@ -18,6 +18,7 @@ const mail = (email, username, retriever) => {
       pass: '69d80293f4e319',
     },
   });
+
   const mailOptions = {
     from: process.env.MAIL,
     to: email,
